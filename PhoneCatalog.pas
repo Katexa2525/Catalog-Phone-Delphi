@@ -5,10 +5,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.Grids;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.Grids,
+  Vcl.ComCtrls, Vcl.ToolWin, System.ImageList, Vcl.ImgList;
 
 const
-  FileName = 'Catalog.dat'; // константа с именем файла
+  FileName = 'Catalog.dat'; // константа с именем дл€ типизированного файла
+  FileTextName = 'CatalogPhone.txt'; //константа с именем дл€ текстового файла
 
 type
   PCatalog = ^TCatalog;
@@ -36,25 +38,35 @@ type
   end;
 
     TForm_Main = class(TForm)Button_Close: TButton;
-    Button_Add: TButton;
-    Button_Del: TButton;
-    Button_Edit: TButton;
     Button_Find: TButton;
     Button_Filter: TButton;
     Button_Sort: TButton;
     StringGrid_Catalog: TStringGrid;
     Button_SaveToFile: TButton;
+    ToolBar1: TToolBar;
+    ToolButton_add: TToolButton;
+    ToolButton_edit: TToolButton;
+    ToolButton_del: TToolButton;
+    ToolButton4: TToolButton;
+    ImageList1: TImageList;
+    ToolButton_find: TToolButton;
+    ToolButton1: TToolButton;
+    ToolButton_filter: TToolButton;
+    ToolButton_txt: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton5: TToolButton;
     procedure Button_CloseClick(Sender: TObject);
-    procedure Button_AddClick(Sender: TObject);
     procedure ShowItemsCatalog;
     procedure FormShow(Sender: TObject);
     function AddItemCatalog(FCount: Cardinal; NPtr: PCatalog): PCatalog;
     procedure Button_SaveToFileClick(Sender: TObject);
-    procedure Button_EditClick(Sender: TObject);
     procedure StringGrid_CatalogDblClick(Sender: TObject);
     procedure SaveItemsInFile(NPtr: PCatalog; isSave: boolean);
-    procedure Button_DelClick(Sender: TObject);
     function FindItemFromGrid(NPtr: PCatalog):PCatalog;
+    procedure ToolButton_addClick(Sender: TObject);
+    procedure ToolButton_editClick(Sender: TObject);
+    procedure ToolButton_delClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -238,24 +250,25 @@ begin
   AddItem.Form_AddItem.ShowModal();
 end;
 
-procedure TForm_Main.Button_AddClick(Sender: TObject);
+// добавление элемента в список
+procedure TForm_Main.ToolButton_addClick(Sender: TObject);
 begin
   AddItem.Form_AddItem.Tag:=0; // признак добавлени€ дл€ формы
   AddItem.Form_AddItem.ShowModal();
 end;
 
-procedure TForm_Main.Button_CloseClick(Sender: TObject);
+// редактирование элемента из списка
+procedure TForm_Main.ToolButton_editClick(Sender: TObject);
 begin
-  // сохран€ю в файл перед выходом
-  SaveItemsInFile(FFirst, true);
-  // закрываю форму и приложение
-  Close;
+ CatalogPhone:=FindItemFromGrid(FFirst);
+  AddItem.Form_AddItem.Tag:=1; // признак редактировани€ дл€ формы
+  AddItem.Form_AddItem.ShowModal();
 end;
 
 // удаление элемента из списка
-procedure TForm_Main.Button_DelClick(Sender: TObject);
+procedure TForm_Main.ToolButton_delClick(Sender: TObject);
 begin
-  if MessageDlg('∆елаете удалить элемент списка?',mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
+if MessageDlg('∆елаете удалить элемент списка?',mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
   begin
     // сначала находим элемент в двусв€зном списке по данным из грида
     CatalogPhone:=FindItemFromGrid(FFirst);
@@ -274,13 +287,14 @@ begin
   end;
 end;
 
-// редактирование элемента из списка
-procedure TForm_Main.Button_EditClick(Sender: TObject);
+procedure TForm_Main.Button_CloseClick(Sender: TObject);
 begin
-  CatalogPhone:=FindItemFromGrid(FFirst);
-  AddItem.Form_AddItem.Tag:=1; // признак редактировани€ дл€ формы
-  AddItem.Form_AddItem.ShowModal();
+  // сохран€ю в файл перед выходом
+  SaveItemsInFile(FFirst, true);
+  // закрываю форму и приложение
+  Close;
 end;
+
 
 procedure TForm_Main.FormShow(Sender: TObject);
 begin
