@@ -138,6 +138,7 @@ object Form_Main: TForm_Main
       Top = 0
       Caption = #1042#1099#1075#1088#1091#1079#1082#1072' '#1074' Excel'
       ImageIndex = 6
+      OnClick = ToolButton_excelClick
     end
     object ToolButton2: TToolButton
       Left = 416

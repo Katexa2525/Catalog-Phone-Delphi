@@ -96,7 +96,7 @@ object Form_AddItem: TForm_AddItem
     Width = 75
     Height = 25
     Caption = #1054#1090#1084#1077#1085#1080#1090#1100
-    TabOrder = 0
+    TabOrder = 13
     OnClick = Button_CancelClick
   end
   object Button_Save: TButton
@@ -105,7 +105,7 @@ object Form_AddItem: TForm_AddItem
     Width = 75
     Height = 25
     Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-    TabOrder = 1
+    TabOrder = 12
     OnClick = Button_SaveClick
   end
   object Edit_PhoneName: TEdit
@@ -113,7 +113,7 @@ object Form_AddItem: TForm_AddItem
     Top = 53
     Width = 121
     Height = 21
-    TabOrder = 2
+    TabOrder = 0
   end
   object Edit_DisplayHight: TEdit
     Left = 256
@@ -121,7 +121,7 @@ object Form_AddItem: TForm_AddItem
     Width = 121
     Height = 21
     NumbersOnly = True
-    TabOrder = 3
+    TabOrder = 6
   end
   object Edit_Price: TEdit
     Left = 48
@@ -129,7 +129,7 @@ object Form_AddItem: TForm_AddItem
     Width = 121
     Height = 21
     NumbersOnly = True
-    TabOrder = 4
+    TabOrder = 2
   end
   object Edit_DisplaySize: TEdit
     Left = 256
@@ -145,18 +145,18 @@ object Form_AddItem: TForm_AddItem
     Width = 121
     Height = 21
     NumbersOnly = True
-    TabOrder = 6
+    TabOrder = 7
   end
   object Edit_YearVihoda: TEdit
     Left = 48
     Top = 197
     Width = 121
     Height = 21
-    TabOrder = 7
+    TabOrder = 3
   end
   object Edit_OperationMemory: TEdit
     Left = 256
-    Top = 195
+    Top = 197
     Width = 121
     Height = 21
     NumbersOnly = True
@@ -175,14 +175,14 @@ object Form_AddItem: TForm_AddItem
     Top = 243
     Width = 121
     Height = 21
-    TabOrder = 10
+    TabOrder = 4
   end
   object ComboBox_TypePhone: TComboBox
     Left = 48
     Top = 101
     Width = 145
     Height = 21
-    TabOrder = 11
+    TabOrder = 1
     Items.Strings = (
       #1057#1084#1072#1088#1090#1092#1086#1085
       #1050#1085#1086#1087#1086#1095#1085#1099#1081
@@ -194,14 +194,14 @@ object Form_AddItem: TForm_AddItem
     Width = 184
     Height = 65
     Caption = #1053#1072#1083#1080#1095#1080#1077' '#1092#1088#1086#1085#1090#1072#1083#1100#1085#1086#1081' '#1082#1072#1084#1077#1088#1099
-    TabOrder = 12
+    TabOrder = 10
     object RadioButton_Yes: TRadioButton
       Left = 16
       Top = 16
       Width = 113
       Height = 17
       Caption = #1044#1072
-      TabOrder = 0
+      TabOrder = 1
     end
     object RadioButton_No: TRadioButton
       Left = 16
@@ -209,7 +209,7 @@ object Form_AddItem: TForm_AddItem
       Width = 113
       Height = 17
       Caption = #1053#1077#1090
-      TabOrder = 1
+      TabOrder = 0
     end
   end
   object Memo_Description: TMemo
@@ -219,6 +219,6 @@ object Form_AddItem: TForm_AddItem
     Height = 89
     Lines.Strings = (
       '')
-    TabOrder = 13
+    TabOrder = 11
   end
 end

@@ -80,9 +80,9 @@ begin
   CatalogPhone.Data.OperationMemory := StrToInt(Form_AddItem.Edit_OperationMemory.Text);
   CatalogPhone.Data.VstroyennayaMemory := StrToInt(Form_AddItem.Edit_VstrMemory.Text);
   if Form_AddItem.RadioButton_Yes.Checked then
-    CatalogPhone.Data.IsFrontCamera := True
+    CatalogPhone.Data.IsFrontCamera := 'Да'
   else
-    CatalogPhone.Data.IsFrontCamera := False;
+    CatalogPhone.Data.IsFrontCamera := 'Нет';
   CatalogPhone.Data.Discription := Form_AddItem.Memo_Description.Text;
   if Tag = 0 then // 0 - значит форма для добавления применяется
   begin
@@ -132,14 +132,14 @@ begin
     Form_AddItem.Edit_PhoneName.Text := CatalogPhone.Data.PhoneName;
     Form_AddItem.ComboBox_TypePhone.Text := CatalogPhone.Data.TypeName;
     Form_AddItem.Edit_YearVihoda.Text := IntToStr(CatalogPhone.Data.YearVihoda);
-    Form_AddItem.Edit_Price.Text := IntToStr(CatalogPhone.Data.Price);
+    Form_AddItem.Edit_Price.Text := CurrToStr(CatalogPhone.Data.Price);
     Form_AddItem.Edit_OS.Text := CatalogPhone.Data.OS;
     Form_AddItem.Edit_DisplaySize.Text :=  IntToStr(CatalogPhone.Data.DisplaySize);
     Form_AddItem.Edit_DisplayWidth.Text := IntToStr(CatalogPhone.Data.DisplayWidth);
     Form_AddItem.Edit_DisplayHight.Text := IntToStr(CatalogPhone.Data.DisplayHigth);
     Form_AddItem.Edit_OperationMemory.Text := IntToStr(CatalogPhone.Data.OperationMemory);
     Form_AddItem.Edit_VstrMemory.Text := IntToStr(CatalogPhone.Data.VstroyennayaMemory);
-    if CatalogPhone.Data.IsFrontCamera then
+    if CatalogPhone.Data.IsFrontCamera='Да' then
       Form_AddItem.RadioButton_Yes.Checked := True
     else
       Form_AddItem.RadioButton_Yes.Checked := False;
