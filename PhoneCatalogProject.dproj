@@ -106,6 +106,10 @@
             <Form>Form_AddItem</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="FormTextFile.pas">
+            <Form>Form_TextFile</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

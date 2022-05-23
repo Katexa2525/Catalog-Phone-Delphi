@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.Grids,
-  Vcl.ComCtrls, Vcl.ToolWin, System.ImageList, Vcl.ImgList;
+  Vcl.ComCtrls, Vcl.ToolWin, System.ImageList, Vcl.ImgList, ComObj;
 
 const
   FileName = 'Catalog.dat'; // константа с именем для типизированного файла - база данных
@@ -55,7 +55,7 @@ type
     ToolButton1: TToolButton;
     ToolButton_filter: TToolButton;
     ToolButton_txt: TToolButton;
-    ToolButton3: TToolButton;
+    ToolButton_excel: TToolButton;
     ToolButton2: TToolButton;
     ToolButton_close: TToolButton;
     PopupMenu_txt: TPopupMenu;
@@ -90,7 +90,7 @@ var
 
 implementation
 
-uses AddItem;
+uses AddItem, FormTextFile;
 
 {$R *.dfm}
 
@@ -259,7 +259,7 @@ begin
   AddItem.Form_AddItem.ShowModal();
 end;
 
-// добавление элемента в список
+// выгрузка в Excel
 procedure TForm_Main.ToolButton_addClick(Sender: TObject);
 begin
   AddItem.Form_AddItem.Tag:=0; // признак добавления для формы
@@ -341,7 +341,7 @@ end;
 // прочитать данные из txt файла
 procedure TForm_Main.MenuItem_ReadTxtClick(Sender: TObject);
 begin
-
+  FormTextFile.Form_TextFile.ShowModal();
 end;
 
 // сохранить в тектовый файл

@@ -133,10 +133,10 @@ object Form_Main: TForm_Main
       ImageIndex = 5
       Style = tbsSeparator
     end
-    object ToolButton3: TToolButton
+    object ToolButton_excel: TToolButton
       Left = 361
       Top = 0
-      Caption = 'ToolButton3'
+      Caption = #1042#1099#1075#1088#1091#1079#1082#1072' '#1074' Excel'
       ImageIndex = 6
     end
     object ToolButton2: TToolButton
