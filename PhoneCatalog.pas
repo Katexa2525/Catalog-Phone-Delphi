@@ -9,7 +9,7 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin, System.ImageList, Vcl.ImgList;
 
 const
-  FileName = 'Catalog.dat'; // константа с именем для типизированного файла
+  FileName = 'Catalog.dat'; // константа с именем для типизированного файла - база данных
   FileTextName = 'CatalogPhone.txt'; //константа с именем для текстового файла
 
 type
@@ -36,8 +36,10 @@ type
     Next: PCatalog;
     Prev: PCatalog
   end;
+  // тип для признака сохранения данных - в типизированный файл (по умолчанию), или в текстовый
+  TypeFileToSave = (toTypedFile, toTextFile);
 
-    TForm_Main = class(TForm)Button_Close: TButton;
+    TForm_Main = class(TForm)
     Button_Find: TButton;
     Button_Filter: TButton;
     Button_Sort: TButton;
@@ -55,18 +57,24 @@ type
     ToolButton_txt: TToolButton;
     ToolButton3: TToolButton;
     ToolButton2: TToolButton;
-    ToolButton5: TToolButton;
+    ToolButton_close: TToolButton;
+    PopupMenu_txt: TPopupMenu;
+    MenuItem_SaveTxt: TMenuItem;
+    MenuItem_ReadTxt: TMenuItem;
     procedure Button_CloseClick(Sender: TObject);
     procedure ShowItemsCatalog;
     procedure FormShow(Sender: TObject);
     function AddItemCatalog(FCount: Cardinal; NPtr: PCatalog): PCatalog;
     procedure Button_SaveToFileClick(Sender: TObject);
     procedure StringGrid_CatalogDblClick(Sender: TObject);
-    procedure SaveItemsInFile(NPtr: PCatalog; isSave: boolean);
+    procedure SaveItemsInFile(NPtr: PCatalog; isSave: boolean; Pr:TypeFileToSave);
     function FindItemFromGrid(NPtr: PCatalog):PCatalog;
     procedure ToolButton_addClick(Sender: TObject);
     procedure ToolButton_editClick(Sender: TObject);
     procedure ToolButton_delClick(Sender: TObject);
+    procedure ToolButton_closeClick(Sender: TObject);
+    procedure MenuItem_ReadTxtClick(Sender: TObject);
+    procedure MenuItem_SaveTxtClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -78,6 +86,7 @@ var
   CatalogPhone: PCatalog;
   FFirst, FLast: PCatalog; // метки для вершины и дна связанного списка
   Form_Main: TForm_Main;
+  PrTypeFileToSave :TypeFileToSave;
 
 implementation
 
@@ -257,6 +266,15 @@ begin
   AddItem.Form_AddItem.ShowModal();
 end;
 
+// выход из приложения
+procedure TForm_Main.ToolButton_closeClick(Sender: TObject);
+begin
+  // сохраняю в файл перед выходом
+  SaveItemsInFile(FFirst, true, toTypedFile);
+  // закрываю форму и приложение
+  Close;
+end;
+
 // редактирование элемента из списка
 procedure TForm_Main.ToolButton_editClick(Sender: TObject);
 begin
@@ -276,7 +294,7 @@ if MessageDlg('Желаете удалить элемент списка?',mtConfirmation, [mbYes, mbNo], 0
     if DeleteItem(CatalogPhone) then
     begin
       // сохраняю в файл из памяти списка с измененным элементом
-      Form_Main.SaveItemsInFile(FFirst, true);
+      Form_Main.SaveItemsInFile(FFirst, true, toTypedFile);
       // отображаю из файла в грид на главной форме
       Form_Main.StringGrid_Catalog.RowCount:=2; // удаляю строки грида
       // формируем заново из файла
@@ -290,7 +308,7 @@ end;
 procedure TForm_Main.Button_CloseClick(Sender: TObject);
 begin
   // сохраняю в файл перед выходом
-  SaveItemsInFile(FFirst, true);
+  SaveItemsInFile(FFirst, true, toTypedFile);
   // закрываю форму и приложение
   Close;
 end;
@@ -305,7 +323,7 @@ begin
   StringGrid_Catalog.Cells[2, 0] := 'Тип';
   StringGrid_Catalog.Cells[3, 0] := 'Год выхода';
   StringGrid_Catalog.Cells[4, 0] := 'Цена';
-  StringGrid_Catalog.Cells[5, 0] := 'Оперативная система';
+  StringGrid_Catalog.Cells[5, 0] := 'Операционная система';
   StringGrid_Catalog.Cells[6, 0] := 'Размер диагонали';
   StringGrid_Catalog.Cells[7, 0] := 'Ширина';
   StringGrid_Catalog.Cells[8, 0] := 'Высота';
@@ -319,44 +337,112 @@ begin
   ShowItemsCatalog(); // формируем данные для грида
 end;
 
-procedure TForm_Main.SaveItemsInFile(NPtr: PCatalog; isSave: boolean);
+
+// прочитать данные из txt файла
+procedure TForm_Main.MenuItem_ReadTxtClick(Sender: TObject);
+begin
+
+end;
+
+// сохранить в тектовый файл
+procedure TForm_Main.MenuItem_SaveTxtClick(Sender: TObject);
+begin
+  SaveItemsInFile(FFirst, true, toTextFile);
+  MessageDlg('Данные сохранены в текстовый файл '+FileTextName+'!', mtInformation, [mbOk], 0, mbOk);
+end;
+
+// процедура записи в типизированный или текстовый файл
+procedure TForm_Main.SaveItemsInFile(NPtr: PCatalog; isSave: boolean; Pr:TypeFileToSave);
 var
   ptr, ptrTemp: PCatalog;
+  FText : TextFile; // файловая переменная для записи в текстовый файл
   TypedFile: File of TFileCatalog; // файловая переменная
   FCatalog: TFileCatalog;
+  StrToTextFile, CameraStr:string;
 begin
   if isSave then
   begin
-    // открытие файла и ассоциация с переменной FileName
-    AssignFile(TypedFile, FileName);
+    if Pr = toTypedFile then
+      // открытие файла и ассоциация с переменной FileName типизированного файла
+      AssignFile(TypedFile, FileName)
+    else if Pr = toTextFile then
+      // открытие файла и ассоциация с переменной FText текстового файла
+      AssignFile(FText, FileTextName);
     try
-      // FileMode := 1; // режим записи
-      Rewrite(TypedFile); // создаю новый файл, перезаписываю старый, если есть
-      // Seek(FileCatalog, FileSize(FileCatalog)); // перемещаемся в конец файла
+      if Pr = toTypedFile then
+        Rewrite(TypedFile) // создаю новый типизированный файл, перезаписываю старый, если есть
+      else if Pr = toTextFile then begin
+        Rewrite(FText); // создаю новый текстовый файл, перезаписываю старый, если есть
+        // Колонки с названиями в текстовом файле
+        StrToTextFile:='          Название           |             Тип             | Год выхода | Цена | Операционная система | Размер диагонали | Ширина | Высота | ОЗУ | ПЗУ | Фронтальная камера | Описание ';
+        // Запись в текстовый файл названия колонок
+        Writeln(FText, StrToTextFile);
+      end;
       // проходимся по двусвязному списку
       ptr := NPtr.Next;
       while ptr <> nil do
       begin
-        FCatalog.PhoneName := ptr.Data.PhoneName;
-        FCatalog.TypeName := ptr.Data.TypeName;
-        FCatalog.YearVihoda := ptr.Data.YearVihoda;
-        FCatalog.Price := ptr.Data.Price;
-        FCatalog.OS := ptr.Data.OS;
-        FCatalog.DisplaySize := ptr.Data.DisplaySize;
-        FCatalog.DisplayWidth := ptr.Data.DisplayWidth;
-        FCatalog.DisplayHigth := ptr.Data.DisplayHigth;
-        FCatalog.OperationMemory := ptr.Data.OperationMemory;
-        FCatalog.VstroyennayaMemory := ptr.Data.VstroyennayaMemory;
-        FCatalog.IsFrontCamera := ptr.Data.IsFrontCamera;
-        FCatalog.Discription := ptr.Data.Discription;
-        FCatalog.PhonePhoto := ptr.Data.PhonePhoto;
-        //
-        Write(TypedFile, FCatalog); // вставляем новый элемент
+        if Pr = toTypedFile then // запись в типизированный файл
+        begin
+          FCatalog.PhoneName := ptr.Data.PhoneName;
+          FCatalog.TypeName := ptr.Data.TypeName;
+          FCatalog.YearVihoda := ptr.Data.YearVihoda;
+          FCatalog.Price := ptr.Data.Price;
+          FCatalog.OS := ptr.Data.OS;
+          FCatalog.DisplaySize := ptr.Data.DisplaySize;
+          FCatalog.DisplayWidth := ptr.Data.DisplayWidth;
+          FCatalog.DisplayHigth := ptr.Data.DisplayHigth;
+          FCatalog.OperationMemory := ptr.Data.OperationMemory;
+          FCatalog.VstroyennayaMemory := ptr.Data.VstroyennayaMemory;
+          FCatalog.IsFrontCamera := ptr.Data.IsFrontCamera;
+          FCatalog.Discription := ptr.Data.Discription;
+          FCatalog.PhonePhoto := ptr.Data.PhonePhoto;
+          // запись в файл
+          Write(TypedFile, FCatalog); // вставляем новый элемент
+        end
+        else if Pr = toTextFile then // запись в текстовый файл
+        begin
+          // формирую строку для записи в текстовый файл
+          StrToTextFile:=ptr.Data.PhoneName;
+          // добавляю пробелы, чтобы красиво смотрелось в тектовом файле
+          if Length(ptr.Data.PhoneName)<30 then StrToTextFile:=StrToTextFile+StringOfChar(' ',30-Length(ptr.Data.PhoneName));
+          StrToTextFile:=StrToTextFile+ptr.Data.TypeName;
+          if Length(ptr.Data.TypeName)<30 then StrToTextFile:=StrToTextFile+StringOfChar(' ',30-Length(ptr.Data.TypeName));
+          StrToTextFile:=StrToTextFile+IntToStr(ptr.Data.YearVihoda);
+          if Length(IntToStr(ptr.Data.YearVihoda))<13 then StrToTextFile:=StrToTextFile+StringOfChar(' ',13-Length(IntToStr(ptr.Data.YearVihoda)));
+          StrToTextFile:=StrToTextFile+IntToStr(ptr.Data.Price);
+          if Length(IntToStr(ptr.Data.Price))<7 then StrToTextFile:=StrToTextFile+StringOfChar(' ',7-Length(IntToStr(ptr.Data.Price)));
+          StrToTextFile:=StrToTextFile+ptr.Data.OS;
+          if Length(ptr.Data.OS)<23 then StrToTextFile:=StrToTextFile+StringOfChar(' ',23-Length(ptr.Data.OS));
+          StrToTextFile:=StrToTextFile+IntToStr(ptr.Data.DisplaySize);
+          if Length(IntToStr(ptr.Data.DisplaySize))<19 then StrToTextFile:=StrToTextFile+StringOfChar(' ',19-Length(IntToStr(ptr.Data.DisplaySize)));
+          StrToTextFile:=StrToTextFile+IntToStr(ptr.Data.DisplayWidth);
+          if Length(IntToStr(ptr.Data.DisplayWidth))<9 then StrToTextFile:=StrToTextFile+StringOfChar(' ',9-Length(IntToStr(ptr.Data.DisplayWidth)));
+          StrToTextFile:=StrToTextFile+IntToStr(ptr.Data.DisplayHigth);
+          if Length(IntToStr(ptr.Data.DisplayHigth))<9 then StrToTextFile:=StrToTextFile+StringOfChar(' ',9-Length(IntToStr(ptr.Data.DisplayHigth)));
+          StrToTextFile:=StrToTextFile+IntToStr(ptr.Data.OperationMemory);
+          if Length(IntToStr(ptr.Data.OperationMemory))<6 then StrToTextFile:=StrToTextFile+StringOfChar(' ',6-Length(IntToStr(ptr.Data.OperationMemory)));
+          StrToTextFile:=StrToTextFile+IntToStr(ptr.Data.VstroyennayaMemory);
+          if Length(IntToStr(ptr.Data.VstroyennayaMemory))<6 then StrToTextFile:=StrToTextFile+StringOfChar(' ',6-Length(IntToStr(ptr.Data.VstroyennayaMemory)));
+          if ptr.Data.IsFrontCamera = true then
+            CameraStr:='Да'
+          else
+            CameraStr:='Нет';
+          StrToTextFile:=StrToTextFile+CameraStr;
+          if Length(CameraStr)<21 then StrToTextFile:=StrToTextFile+StringOfChar(' ',21-Length(CameraStr));
+          StrToTextFile:=StrToTextFile+ptr.Data.Discription;
+          // запись в текстовый файл сформированной строки
+          Writeln(FText, StrToTextFile);
+        end;
+        // переход к следующему элементу
         ptrTemp := ptr.Next;
         ptr := ptrTemp;
       end;
     finally
-      CloseFile(TypedFile);
+      if Pr = toTypedFile then // закрываю типизированный файл
+        CloseFile(TypedFile)
+      else if Pr = toTextFile then // закрываю текстовый файл
+        CloseFile(FText);
     end;
   end;
 end; { вызов процедуры добавления элемента (листинг 6.5) }
@@ -364,7 +450,7 @@ end; { вызов процедуры добавления элемента (листинг 6.5) }
 procedure TForm_Main.Button_SaveToFileClick(Sender: TObject);
 begin
   // сохраняю в файл
-  SaveItemsInFile(FFirst, true);
+  SaveItemsInFile(FFirst, true, toTypedFile);
   // ShowMessage('Данные сохранены в файл');
   MessageDlg('Данные сохранены в файл', mtInformation, [mbOk], 0, mbOk);
 end;

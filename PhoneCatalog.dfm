@@ -13,22 +13,13 @@ object Form_Main: TForm_Main
   Position = poScreenCenter
   OnShow = FormShow
   TextHeight = 13
-  object Button_Close: TButton
-    Left = 774
-    Top = 512
-    Width = 75
-    Height = 25
-    Caption = #1047#1072#1082#1088#1099#1090#1100
-    TabOrder = 2
-    OnClick = Button_CloseClick
-  end
   object Button_Find: TButton
     Left = 541
     Top = 512
     Width = 75
     Height = 25
     Caption = #1053#1072#1081#1090#1080
-    TabOrder = 3
+    TabOrder = 2
   end
   object Button_Filter: TButton
     Left = 622
@@ -36,7 +27,7 @@ object Form_Main: TForm_Main
     Width = 75
     Height = 25
     Caption = #1060#1080#1083#1100#1090#1088
-    TabOrder = 4
+    TabOrder = 3
   end
   object Button_Sort: TButton
     Left = 460
@@ -44,7 +35,7 @@ object Form_Main: TForm_Main
     Width = 75
     Height = 25
     Caption = #1057#1086#1088#1090#1080#1088#1086#1074#1082#1072
-    TabOrder = 5
+    TabOrder = 4
   end
   object StringGrid_Catalog: TStringGrid
     Left = 8
@@ -84,8 +75,7 @@ object Form_Main: TForm_Main
     ButtonWidth = 55
     Caption = 'ToolBar1'
     Images = ImageList1
-    TabOrder = 6
-    ExplicitWidth = 865
+    TabOrder = 5
     object ToolButton_add: TToolButton
       Left = 0
       Top = 0
@@ -127,46 +117,49 @@ object Form_Main: TForm_Main
       Caption = #1060#1080#1083#1100#1090#1088
       ImageIndex = 4
     end
-    object ToolButton_filter: TToolButton
+    object ToolButton_txt: TToolButton
       Left = 283
+      Top = 0
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1074' txt '#1092#1072#1081#1083
+      DropdownMenu = PopupMenu_txt
+      ImageIndex = 5
+      Style = tbsDropDown
+    end
+    object ToolButton_filter: TToolButton
+      Left = 353
       Top = 0
       Width = 8
       Caption = #1060#1080#1083#1100#1090#1088
       ImageIndex = 5
       Style = tbsSeparator
     end
-    object ToolButton_txt: TToolButton
-      Left = 291
-      Top = 0
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1074' txt '#1092#1072#1081#1083
-      ImageIndex = 5
-    end
     object ToolButton3: TToolButton
-      Left = 346
+      Left = 361
       Top = 0
       Caption = 'ToolButton3'
       ImageIndex = 6
     end
     object ToolButton2: TToolButton
-      Left = 401
+      Left = 416
       Top = 0
       Width = 8
       Caption = 'ToolButton2'
       ImageIndex = 7
       Style = tbsSeparator
     end
-    object ToolButton5: TToolButton
-      Left = 409
+    object ToolButton_close: TToolButton
+      Left = 424
       Top = 0
-      Caption = 'ToolButton5'
+      Caption = #1042#1099#1081#1090#1080' '#1080#1079' '#1087#1088#1080#1083#1086#1078#1077#1085#1080#1103
       ImageIndex = 7
+      OnClick = ToolButton_closeClick
     end
   end
   object ImageList1: TImageList
     Height = 48
     Width = 48
-    Left = 728
-    Top = 512
+    Left = 24
+    Top = 128
     Bitmap = {
       494C010108001800040030003000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000C000000090000000010020000000000000B0
@@ -3738,5 +3731,17 @@ object Form_Main: TForm_Main
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
+  end
+  object PopupMenu_txt: TPopupMenu
+    Left = 104
+    Top = 128
+    object MenuItem_SaveTxt: TMenuItem
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1074' txt '#1092#1072#1081#1083
+      OnClick = MenuItem_SaveTxtClick
+    end
+    object MenuItem_ReadTxt: TMenuItem
+      Caption = #1055#1088#1086#1095#1080#1090#1072#1090#1100' '#1080#1079' txt '#1092#1072#1081#1083#1072
+      OnClick = MenuItem_ReadTxtClick
+    end
   end
 end

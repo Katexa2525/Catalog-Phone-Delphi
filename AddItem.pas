@@ -113,7 +113,7 @@ begin
   else // если редактирование формы
   begin
     // сохран€ю в файл из пам€ти списка с измененным элементом
-    Form_Main.SaveItemsInFile(FFirst, true);
+    Form_Main.SaveItemsInFile(FFirst, true, toTypedFile) ;
     // отображаю из файла в грид на главной форме
     Form_Main.StringGrid_Catalog.RowCount:=2; // удал€ю строки грида
     // формируем заново из файла
