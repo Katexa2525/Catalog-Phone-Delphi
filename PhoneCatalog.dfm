@@ -2,8 +2,8 @@ object Form_Main: TForm_Main
   Left = 0
   Top = 0
   Caption = #1043#1083#1072#1074#1085#1072#1103' '#1092#1086#1088#1084#1072
-  ClientHeight = 562
-  ClientWidth = 912
+  ClientHeight = 638
+  ClientWidth = 1130
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,35 +13,11 @@ object Form_Main: TForm_Main
   Position = poScreenCenter
   OnShow = FormShow
   TextHeight = 13
-  object Button_Find: TButton
-    Left = 541
-    Top = 512
-    Width = 75
-    Height = 25
-    Caption = #1053#1072#1081#1090#1080
-    TabOrder = 2
-  end
-  object Button_Filter: TButton
-    Left = 622
-    Top = 512
-    Width = 75
-    Height = 25
-    Caption = #1060#1080#1083#1100#1090#1088
-    TabOrder = 3
-  end
-  object Button_Sort: TButton
-    Left = 460
-    Top = 512
-    Width = 75
-    Height = 25
-    Caption = #1057#1086#1088#1090#1080#1088#1086#1074#1082#1072
-    TabOrder = 4
-  end
   object StringGrid_Catalog: TStringGrid
     Left = 8
     Top = 60
-    Width = 896
-    Height = 446
+    Width = 1114
+    Height = 570
     ColCount = 13
     DrawingStyle = gdsGradient
     FixedColor = clSilver
@@ -55,27 +31,33 @@ object Form_Main: TForm_Main
     ParentFont = False
     TabOrder = 0
     OnDblClick = StringGrid_CatalogDblClick
-  end
-  object Button_SaveToFile: TButton
-    Left = 302
-    Top = 512
-    Width = 133
-    Height = 25
-    Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1074' '#1092#1072#1081#1083
-    TabOrder = 1
-    OnClick = Button_SaveToFileClick
+    ColWidths = (
+      64
+      110
+      92
+      85
+      73
+      82
+      83
+      80
+      77
+      67
+      82
+      142
+      64)
   end
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 912
+    Width = 1130
     Height = 54
     AutoSize = True
     ButtonHeight = 54
     ButtonWidth = 55
     Caption = 'ToolBar1'
     Images = ImageList1
-    TabOrder = 5
+    TabOrder = 1
+    ExplicitWidth = 912
     object ToolButton_add: TToolButton
       Left = 0
       Top = 0

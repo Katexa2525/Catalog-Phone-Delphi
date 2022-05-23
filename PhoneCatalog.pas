@@ -39,11 +39,7 @@ type
   TypeFileToSave = (toTypedFile, toTextFile, toExcel);
 
     TForm_Main = class(TForm)
-    Button_Find: TButton;
-    Button_Filter: TButton;
-    Button_Sort: TButton;
     StringGrid_Catalog: TStringGrid;
-    Button_SaveToFile: TButton;
     ToolBar1: TToolBar;
     ToolButton_add: TToolButton;
     ToolButton_edit: TToolButton;
@@ -64,7 +60,6 @@ type
     procedure ShowItemsCatalog;
     procedure FormShow(Sender: TObject);
     function AddItemCatalog(FCount: Cardinal; NPtr: PCatalog): PCatalog;
-    procedure Button_SaveToFileClick(Sender: TObject);
     procedure StringGrid_CatalogDblClick(Sender: TObject);
     procedure SaveItemsInFile(NPtr: PCatalog; isSave: boolean; Pr:TypeFileToSave);
     function FindItemFromGrid(NPtr: PCatalog):PCatalog;
@@ -520,14 +515,5 @@ begin
     end;
   end;
 end; { вызов процедуры добавления элемента (листинг 6.5) }
-
-procedure TForm_Main.Button_SaveToFileClick(Sender: TObject);
-begin
-  // сохраняю в файл
-  SaveItemsInFile(FFirst, true, toTypedFile);
-  // ShowMessage('Данные сохранены в файл');
-  MessageDlg('Данные сохранены в файл', mtInformation, [mbOk], 0, mbOk);
-end;
-
 
 end.
