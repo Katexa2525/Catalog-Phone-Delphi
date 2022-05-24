@@ -27,10 +27,11 @@ object Form_Main: TForm_Main
     Font.Height = -11
     Font.Name = 'Tahoma'
     Font.Style = []
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goFixedRowDefAlign]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goFixedRowClick, goFixedRowDefAlign]
     ParentFont = False
     TabOrder = 0
     OnDblClick = StringGrid_CatalogDblClick
+    OnFixedCellClick = StringGrid_CatalogFixedCellClick
     ColWidths = (
       64
       110
@@ -57,7 +58,6 @@ object Form_Main: TForm_Main
     Caption = 'ToolBar1'
     Images = ImageList1
     TabOrder = 1
-    ExplicitWidth = 912
     object ToolButton_add: TToolButton
       Left = 0
       Top = 0

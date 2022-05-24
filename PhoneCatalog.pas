@@ -1,4 +1,4 @@
-unit PhoneCatalog;
+п»їunit PhoneCatalog;
 
 interface
 
@@ -9,12 +9,12 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin, System.ImageList, Vcl.ImgList, ComObj;
 
 const
-  FileName = 'Catalog.dat'; // константа с именем для типизированного файла - база данных
-  FileTextName = 'CatalogPhone.txt'; //константа с именем для текстового файла
+  FileName = 'Catalog.dat'; // РєРѕРЅСЃС‚Р°РЅС‚Р° СЃ РёРјРµРЅРµРј РґР»СЏ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅРѕРіРѕ С„Р°Р№Р»Р° - Р±Р°Р·Р° РґР°РЅРЅС‹С…
+  FileTextName = 'CatalogPhone.txt'; //РєРѕРЅСЃС‚Р°РЅС‚Р° СЃ РёРјРµРЅРµРј РґР»СЏ С‚РµРєСЃС‚РѕРІРѕРіРѕ С„Р°Р№Р»Р°
 
 type
   PCatalog = ^TCatalog;
-  // тип данных по каталогу телефонов
+  // С‚РёРї РґР°РЅРЅС‹С… РїРѕ РєР°С‚Р°Р»РѕРіСѓ С‚РµР»РµС„РѕРЅРѕРІ
   TFileCatalog = packed record
     PhoneName: string[30];
     TypeName: String[30];
@@ -22,20 +22,20 @@ type
     Price: Currency;
     OS: String[20];
     DisplaySize: integer;
-    DisplayWidth: integer; // разрешение, ширина
-    DisplayHigth: integer; // разрешение, длина
+    DisplayWidth: integer; // СЂР°Р·СЂРµС€РµРЅРёРµ, С€РёСЂРёРЅР°
+    DisplayHigth: integer; // СЂР°Р·СЂРµС€РµРЅРёРµ, РґР»РёРЅР°
     OperationMemory: integer;
     VstroyennayaMemory: integer;
     IsFrontCamera: string[3];
-    Discription: String[255]; // описание самого телефона
+    Discription: String[255]; // РѕРїРёСЃР°РЅРёРµ СЃР°РјРѕРіРѕ С‚РµР»РµС„РѕРЅР°
   end;
-  // тип двусвязного списка
+  // С‚РёРї РґРІСѓСЃРІСЏР·РЅРѕРіРѕ СЃРїРёСЃРєР°
   TCatalog = packed record
     Data: TFileCatalog;
     Next: PCatalog;
     Prev: PCatalog
   end;
-  // тип для признака сохранения данных - в типизированный файл (по умолчанию), или в текстовый, или в Excel
+  // С‚РёРї РґР»СЏ РїСЂРёР·РЅР°РєР° СЃРѕС…СЂР°РЅРµРЅРёСЏ РґР°РЅРЅС‹С… - РІ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹Р№ С„Р°Р№Р» (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ), РёР»Рё РІ С‚РµРєСЃС‚РѕРІС‹Р№, РёР»Рё РІ Excel
   TypeFileToSave = (toTypedFile, toTextFile, toExcel);
 
     TForm_Main = class(TForm)
@@ -70,6 +70,8 @@ type
     procedure MenuItem_ReadTxtClick(Sender: TObject);
     procedure MenuItem_SaveTxtClick(Sender: TObject);
     procedure ToolButton_excelClick(Sender: TObject);
+    procedure StringGrid_CatalogFixedCellClick(Sender: TObject; ACol, ARow: Integer);
+    procedure SetColumnHeaders(StringGrid_Catalog: TStringGrid);
   private
     { Private declarations }
   public
@@ -77,9 +79,9 @@ type
   end;
 
 var
-  FileCatalog: File of PCatalog; // файловая переменная
+  FileCatalog: File of PCatalog; // С„Р°Р№Р»РѕРІР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ
   CatalogPhone: PCatalog;
-  FFirst, FLast: PCatalog; // метки для вершины и дна связанного списка
+  FFirst, FLast: PCatalog; // РјРµС‚РєРё РґР»СЏ РІРµСЂС€РёРЅС‹ Рё РґРЅР° СЃРІСЏР·Р°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°
   Form_Main: TForm_Main;
   PrTypeFileToSave :TypeFileToSave;
 
@@ -89,25 +91,25 @@ uses AddItem, FormTextFile;
 
 {$R *.dfm}
 
-////// Функции для работы с двусвязным списком в памяти /////////////////
+////// Р¤СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РґРІСѓСЃРІСЏР·РЅС‹Рј СЃРїРёСЃРєРѕРј РІ РїР°РјСЏС‚Рё /////////////////
 
-// добавление элемента в список
+// РґРѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РІ СЃРїРёСЃРѕРє
 function TForm_Main.AddItemCatalog(FCount: Cardinal; NPtr: PCatalog): PCatalog;
 begin
-  // Новый элемент
+  // РќРѕРІС‹Р№ СЌР»РµРјРµРЅС‚
   Try
     New(NPtr);
-    // Переназначение ссылок
+    // РџРµСЂРµРЅР°Р·РЅР°С‡РµРЅРёРµ СЃСЃС‹Р»РѕРє
     If FCount = 0 then
     Begin
-      // инициализация вершины и дна списка
+      // РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІРµСЂС€РёРЅС‹ Рё РґРЅР° СЃРїРёСЃРєР°
       FFirst := NPtr;
       FLast := NPtr;
       NPtr^.Prev := nil;
       NPtr^.Next := nil;
     End
     Else if FCount > 0 then
-    Begin // организация списка, вставляет новый элемент в конец
+    Begin // РѕСЂРіР°РЅРёР·Р°С†РёСЏ СЃРїРёСЃРєР°, РІСЃС‚Р°РІР»СЏРµС‚ РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ РІ РєРѕРЅРµС†
       FLast^.Next := NPtr;
       NPtr^.Prev := FLast;
       NPtr^.Next := nil;
@@ -120,8 +122,8 @@ begin
   End;
 end;
 
-// функция поиска элемента списка по названию, типу, операционной системе
-// начинаем с первого элемента заглушки двусвязного списка NPtr
+// С„СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР° РїРѕ РЅР°Р·РІР°РЅРёСЋ, С‚РёРїСѓ, РѕРїРµСЂР°С†РёРѕРЅРЅРѕР№ СЃРёСЃС‚РµРјРµ
+// РЅР°С‡РёРЅР°РµРј СЃ РїРµСЂРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р° Р·Р°РіР»СѓС€РєРё РґРІСѓСЃРІСЏР·РЅРѕРіРѕ СЃРїРёСЃРєР° NPtr
 function FindItemList(pPhoneName, pTypeName, pOS:string; NPtr: PCatalog):PCatalog;
 var
   ptr, ptrTemp: PCatalog;
@@ -131,27 +133,27 @@ begin
   begin
     if (ptr.Data.PhoneName=pPhoneName) and (ptr.Data.TypeName=pTypeName) and
        (ptr.Data.OS=pOS) then begin
-      break; // выход из цикла, если нашли
+      break; // РІС‹С…РѕРґ РёР· С†РёРєР»Р°, РµСЃР»Рё РЅР°С€Р»Рё
     end
     else begin
       ptrTemp := ptr.Next;
       ptr := ptrTemp;
     end;
   end;
-  // если вернуло пустой указатель (nil), то не нашли элементи с этими входными параметрами функции
-  Result := ptr; // возвращаем элемент списка
+  // РµСЃР»Рё РІРµСЂРЅСѓР»Рѕ РїСѓСЃС‚РѕР№ СѓРєР°Р·Р°С‚РµР»СЊ (nil), С‚Рѕ РЅРµ РЅР°С€Р»Рё СЌР»РµРјРµРЅС‚Рё СЃ СЌС‚РёРјРё РІС…РѕРґРЅС‹РјРё РїР°СЂР°РјРµС‚СЂР°РјРё С„СѓРЅРєС†РёРё
+  Result := ptr; // РІРѕР·РІСЂР°С‰Р°РµРј СЌР»РµРјРµРЅС‚ СЃРїРёСЃРєР°
 end;
 
-// функция удаления указанного элемента из списка
+// С„СѓРЅРєС†РёСЏ СѓРґР°Р»РµРЅРёСЏ СѓРєР°Р·Р°РЅРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РёР· СЃРїРёСЃРєР°
 function DeleteItem(NPtr: PCatalog): Boolean;
 begin
   If NPtr=nil then
   Begin
-    Result:=False; // элемент не удален
+    Result:=False; // СЌР»РµРјРµРЅС‚ РЅРµ СѓРґР°Р»РµРЅ
     Exit;
   End;
 
-    //Переназначение ссылок
+    //РџРµСЂРµРЅР°Р·РЅР°С‡РµРЅРёРµ СЃСЃС‹Р»РѕРє
   If NPtr^.Prev=nil then
     FFirst:=NPtr^.Next
   Else
@@ -162,26 +164,185 @@ begin
   Else
     NPtr^.Next^.Prev:=NPtr^.Prev;
 
-    //Удаление из памяти элемента
+    //РЈРґР°Р»РµРЅРёРµ РёР· РїР°РјСЏС‚Рё СЌР»РµРјРµРЅС‚Р°
   Dispose(NPtr);
-  // возвращаю True, если удачно удален элемент
+  // РІРѕР·РІСЂР°С‰Р°СЋ True, РµСЃР»Рё СѓРґР°С‡РЅРѕ СѓРґР°Р»РµРЅ СЌР»РµРјРµРЅС‚
   Result:=True;
 end;
 
+// РїСЂРѕС†РµРґСѓСЂР° РѕС‡РёСЃС‚РєРё РїР°РјСЏС‚Рё РѕС‚ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°
+procedure ClearList;
+var
+  Second: PCatalog;
+begin
+  If FFirst=nil then Exit;
+
+  Repeat
+    Second:=FFirst^.Next;
+    Dispose(FFirst);
+    FFirst:=Second;
+  Until FFirst=nil;
+  FLast:=nil;
+end;
+
+//РњРµРЅСЏСЋ РјРµСЃС‚Р°РјРё СЌР»РµРјРµРЅС‚С‹ El1 Рё El2 РІ СЃРїРёСЃРєРµ.
+function ChangeItems(El1, El2: PCatalog): Boolean;
+var
+  DataTemp: TFileCatalog; // Р·Р°РїРёСЃСЊ СЃ РґР°РЅРЅС‹РјРё
+  Ptr, PrtPrev, PrtNext: PCatalog; // РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР»СЏ СЃСЃС‹Р»РѕРє РЅР° СЌР»РµРјРµРЅС‚С‹
+begin
+  If (El1=nil) or (El2=nil) then
+  Begin
+    Result:=False;
+    Exit;
+  End
+  Else if El1=El2 then
+  Begin
+    Result:=True;
+    Exit;
+  End;
+
+   Ptr:=El2;
+   PrtPrev:= El2^.Prev;
+   PrtNext:=El2^.Next;
+
+   El2:=El1;
+   El2^.Prev:=El1^.Prev;
+   El2^.Next:= El1^.Next;
+
+   El1:=Ptr;
+   El1^.Prev:=Ptr^.Prev;
+   El1^.Next:= Ptr^.Next;
+
+   // РјРµРЅСЏСЋ РґР°РЅРЅС‹Рµ
+   DataTemp:=El1^.Data;
+   El1^.Data:=El2^.Data;
+   El2^.Data:=DataTemp;
+
+    //РњРµРЅСЏСЋ РґР°РЅРЅС‹Рµ СЃРѕСЃРµРґРµР№
+ {* If El1^.Prev=El2 then //Р•СЃР»Рё СЌР»РµРјРµРЅС‚С‹ - СЃРѕСЃРµРґРё РґСЂСѓРі РґСЂСѓРіСѓ
+  Begin
+    El1^.Prev:=El2^.Prev;
+    if El1^.Next<>nil then
+      El1^.Next^.Prev:=El2;
+    if El2^.Prev<>nil then
+      El2^.Prev^.Next:=El1;
+    El2^.Next:=El1^.Next;
+    // РјРµРЅСЏСЋ РґР°РЅРЅС‹Рµ
+    DataTemp:=El1^.Data;
+    El1^.Data:=El2^.Data;
+    El2^.Data:=DataTemp;
+  End
+  Else if El1^.Next=El2 then
+  Begin
+    El2^.Prev:=El1^.Prev;
+    if El2^.Next<>nil then
+      El2^.Next^.Prev:=El1;
+    if El1^.Prev<>nil then
+      El1^.Prev^.Next:=El2;
+    El1^.Next:=El2^.Next;
+    // РјРµРЅСЏСЋ РґР°РЅРЅС‹Рµ
+    DataTemp:=El1^.Data;
+    El1^.Data:=El2^.Data;
+    El2^.Data:=DataTemp;
+  End
+  Else //Р•СЃР»Рё РѕРЅРё РЅРµ СЃРѕСЃРµРґРё
+  Begin
+    try
+      New(Ptr); //РРЅР°С‡Рµ РјРѕР¶РµС‚ РїРѕСЏРІРёС‚СЊСЃСЏ РѕС€РёР±РєР° Access violation
+    except
+      Result:=False;
+      Exit;
+    end;
+
+    If El1^.Prev<>nil then El1^.Prev^.Next:=El2;
+    If El1^.Next<>nil then El1^.Next^.Prev:=El2;
+    If El2^.Prev<>nil then El2^.Prev^.Next:=El1;
+    If El2^.Next<>nil then El2^.Next^.Prev:=El1;
+
+    // РѕР±РјРµРЅ С‡РµСЂРµР· РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ Ptr
+    Ptr^.Prev:=El1^.Prev;
+    Ptr^.Next:=El1^.Next;
+
+    El1^.Prev:=El2^.Prev;
+    El1^.Next:=El2^.Next;
+
+    El2^.Prev:=Ptr^.Prev;
+    El2^.Next:=Ptr^.Next;
+
+    // РјРµРЅСЏСЋ РґР°РЅРЅС‹Рµ
+    DataTemp:=El1^.Data;
+    El1^.Data:=El2^.Data;
+    El2^.Data:=DataTemp;
+
+    Dispose(Ptr);
+  End;//Else    *}
+
+  If El1^.Prev=nil then FFirst:=El1;
+  If El1^.Next=nil then FLast:=El1;
+  If El2^.Prev=nil then FFirst:=El2;
+  If El2^.Next=nil then FLast:=El2;
+
+  Result:=True;
+end;
+
+// CС‡РёС‚Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°
+function CalculateItems: Cardinal;
+var
+  i: Cardinal;
+  Ptr: PCatalog;
+begin
+  i:=1;
+  Ptr:=FFirst;
+  While Ptr<>FLast do
+  Begin
+    Ptr:=Ptr^.Next;
+    Inc(i);
+  End;
+  Result:=i;
+end;
+
+// СЃРѕСЂС‚РёСЂРѕРІРєР° РІС‹Р±РѕСЂРѕРј: РёС‰Сѓ РЅР°РёРјРµРЅСЊС€РёР№ СЌР»РµРјРµРЅС‚, РєРѕС‚РѕСЂС‹Р№ Р·Р°С‚РµРј РјРµРЅСЏРµС‚СЃСЏ РјРµСЃС‚Р°РјРё СЃ СЌР»РµРјРµРЅС‚РѕРј РёР· РЅР°С‡Р°Р»Р° СЃРїРёСЃРєР°,
+// РґР°Р»РµРµ РЅР°С…РѕРґРёС‚СЃСЏ РЅР°РёРјРµРЅСЊС€РёР№ РёР· РѕСЃС‚Р°РІС€РёС…СЃСЏ СЌР»РµРјРµРЅС‚РѕРІ Рё РјРµРЅСЏРµС‚СЃСЏ РјРµСЃС‚Р°РјРё СЃРѕ РІС‚РѕСЂС‹Рј СЌР»РµРјРµРЅС‚РѕРј Рё С‚Рґ
+procedure SortItems;
+var
+  Ptr, Ptr_1, PtrBestValue: PCatalog;
+begin
+  Ptr:=FFirst^.Next;
+  While Ptr<>nil do // РїРµСЂРІС‹Р№ С†РёРєР» СЃ РЅР°С‡Р°Р»Р° СЃРїРёСЃРєР°
+  Begin
+    PtrBestValue := Ptr; // Р·РЅР°С‡РµРЅРёРµ РЅР°РёРјРµРЅСЊС€РµРіРѕ СЌР»РµРјРµРЅС‚Р°
+    // РїСЂРѕС…РѕРґ РґРѕ РєРѕРЅС†Р° СЃРїРёСЃРєР° СЃРѕ СЃР»РµРґСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р° Рё РЅР°С…РѕР¶РґРµРЅРёРµ РјРёРЅ СЌР»РµРјРµРЅС‚Р°
+    Ptr_1:=Ptr^.Next;
+    While Ptr_1<>nil do // РІС‚РѕСЂРѕР№ С†РёРєР» СЃРѕ СЃР»РµРґСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    begin
+      if Ptr_1.Data.Price < PtrBestValue.Data.Price then
+        PtrBestValue := Ptr_1; // Р·РЅР°С‡РµРЅРёРµ РЅР°РёРјРµРЅСЊС€РµРіРѕ СЌР»РµРјРµРЅС‚Р°
+      // Рє СЃР»РµРґ СЌР»РµРјРµРЅС‚Сѓ
+      Ptr_1:=Ptr_1^.Next;
+    end;
+    // РЅР°РёРјРµРЅСЊС€РёР№ СЌР»РµРјРµРЅС‚ PtrBestValue РЅР°Р№РґРµРЅ, РїРµСЂРµСЃС‚Р°РІР»СЏСЋ СЃ РµР»РµРјРµРЅС‚РѕРј Ptr
+    ChangeItems(PtrBestValue, Ptr);
+    // Рє СЃР»РµРґ СЌР»РµРјРµРЅС‚Сѓ
+    Ptr:=Ptr^.Next;
+  End;
+end;
+
+
 ///////////////////////////////////////////////////////////////
 
-procedure TForm_Main.ShowItemsCatalog; // просмотр файла
+procedure TForm_Main.ShowItemsCatalog; // РїСЂРѕСЃРјРѕС‚СЂ С„Р°Р№Р»Р°
 var
-  num: Cardinal; // номер элемента файла
+  num: Cardinal; // РЅРѕРјРµСЂ СЌР»РµРјРµРЅС‚Р° С„Р°Р№Р»Р°
   i: integer;
   NPtr: PCatalog;
-  TypedFile: File of TFileCatalog; // файловая переменная
+  TypedFile: File of TFileCatalog; // С„Р°Р№Р»РѕРІР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ
   FCatalog: TFileCatalog;
   P: ^PCatalog;
 begin
-  // инициализация двусвязного списка
+  // РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґРІСѓСЃРІСЏР·РЅРѕРіРѕ СЃРїРёСЃРєР°
   CatalogPhone := AddItemCatalog(0, CatalogPhone);
-  // открытие файла и ассоциация с переменной FileName
+  // РѕС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»Р° Рё Р°СЃСЃРѕС†РёР°С†РёСЏ СЃ РїРµСЂРµРјРµРЅРЅРѕР№ FileName
   AssignFile(TypedFile, FileName);
   try
     num := 0;
@@ -189,10 +350,10 @@ begin
     Reset(TypedFile);
     while not Eof(TypedFile) do
     begin
-      Read(TypedFile, FCatalog); // читаем элемент из файла
-      // добавляю элемент в список
+      Read(TypedFile, FCatalog); // С‡РёС‚Р°РµРј СЌР»РµРјРµРЅС‚ РёР· С„Р°Р№Р»Р°
+      // РґРѕР±Р°РІР»СЏСЋ СЌР»РµРјРµРЅС‚ РІ СЃРїРёСЃРѕРє
       CatalogPhone := AddItemCatalog(num, NPtr);
-      // заполняю данными
+      // Р·Р°РїРѕР»РЅСЏСЋ РґР°РЅРЅС‹РјРё
       CatalogPhone.Data.PhoneName := FCatalog.PhoneName;
       CatalogPhone.Data.TypeName := FCatalog.TypeName;
       CatalogPhone.Data.YearVihoda := FCatalog.YearVihoda;
@@ -205,10 +366,10 @@ begin
       CatalogPhone.Data.VstroyennayaMemory := FCatalog.VstroyennayaMemory;
       CatalogPhone.Data.IsFrontCamera := FCatalog.IsFrontCamera;
       CatalogPhone.Data.Discription := FCatalog.Discription;
-      // записываю данные в грид из элемента списка
+      // Р·Р°РїРёСЃС‹РІР°СЋ РґР°РЅРЅС‹Рµ РІ РіСЂРёРґ РёР· СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
       with StringGrid_Catalog do
       begin
-        i := RowCount-1 ; // строка для записи в грид
+        i := RowCount-1 ; // СЃС‚СЂРѕРєР° РґР»СЏ Р·Р°РїРёСЃРё РІ РіСЂРёРґ
         Cells[0, i] := IntToStr(num);
         Cells[1, i] := CatalogPhone.Data.PhoneName;
         Cells[2, i] := CatalogPhone.Data.TypeName;
@@ -222,14 +383,14 @@ begin
         Cells[10, i] := IntToStr(CatalogPhone.Data.VstroyennayaMemory);
         Cells[11, i] := CatalogPhone.Data.IsFrontCamera;
         Cells[12, i] := CatalogPhone.Data.Discription;
-        RowCount := RowCount + 1; // Увеличиваем количество строк на 1
-        //P := @CatalogPhone^; // адрес в памяти элемента списка
+        RowCount := RowCount + 1; // РЈРІРµР»РёС‡РёРІР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂРѕРє РЅР° 1
+        //P := @CatalogPhone^; // Р°РґСЂРµСЃ РІ РїР°РјСЏС‚Рё СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
       end;
       Inc(num);
     end;
   finally
     CloseFile(TypedFile);
-    StringGrid_Catalog.RowCount:=StringGrid_Catalog.RowCount - 1; // Увеличиваем количество строк на 1
+    StringGrid_Catalog.RowCount:=StringGrid_Catalog.RowCount - 1; // РЈРІРµР»РёС‡РёРІР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂРѕРє РЅР° 1
   end;
 end;
 
@@ -237,12 +398,12 @@ function TForm_Main.FindItemFromGrid(NPtr: PCatalog):PCatalog;
 var
   numRow:integer;
 begin
-  numRow:=StringGrid_Catalog.Row; // получаю выделенную строку таблицы
-  // проверяю, выбрана ли строка данных в гриде, а не заголовочная часть
-  if (StringGrid_Catalog.Cells[1,numRow]='Название') and (StringGrid_Catalog.Cells[2,numRow]='Тип') and
-     (StringGrid_Catalog.Cells[5,numRow]='Операционная система') then
+  numRow:=StringGrid_Catalog.Row; // РїРѕР»СѓС‡Р°СЋ РІС‹РґРµР»РµРЅРЅСѓСЋ СЃС‚СЂРѕРєСѓ С‚Р°Р±Р»РёС†С‹
+  // РїСЂРѕРІРµСЂСЏСЋ, РІС‹Р±СЂР°РЅР° Р»Рё СЃС‚СЂРѕРєР° РґР°РЅРЅС‹С… РІ РіСЂРёРґРµ, Р° РЅРµ Р·Р°РіРѕР»РѕРІРѕС‡РЅР°СЏ С‡Р°СЃС‚СЊ
+  if (StringGrid_Catalog.Cells[1,numRow]='РќР°Р·РІР°РЅРёРµ') and (StringGrid_Catalog.Cells[2,numRow]='РўРёРї') and
+     (StringGrid_Catalog.Cells[5,numRow]='РћРїРµСЂР°С†РёРѕРЅРЅР°СЏ СЃРёСЃС‚РµРјР°') then
     begin
-      MessageDlg('Выберите строку данных для редактирования!', mtInformation, [mbOk], 0, mbOk);
+      MessageDlg('Р’С‹Р±РµСЂРёС‚Рµ СЃС‚СЂРѕРєСѓ РґР°РЅРЅС‹С… РґР»СЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ!', mtInformation, [mbOk], 0, mbOk);
       Result:= nil;
     end
   else
@@ -253,64 +414,89 @@ begin
   Result:= CatalogPhone;
 end;
 
-// двойной щелчок по строке грида для получения формы редактирования
+// РґРІРѕР№РЅРѕР№ С‰РµР»С‡РѕРє РїРѕ СЃС‚СЂРѕРєРµ РіСЂРёРґР° РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ С„РѕСЂРјС‹ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
 procedure TForm_Main.StringGrid_CatalogDblClick(Sender: TObject);
 begin
   CatalogPhone:=FindItemFromGrid(FFirst);
-  AddItem.Form_AddItem.Tag:=1; // признак редактирования для формы
+  AddItem.Form_AddItem.Tag:=1; // РїСЂРёР·РЅР°Рє СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РґР»СЏ С„РѕСЂРјС‹
   AddItem.Form_AddItem.ShowModal();
+end;
+
+// РЅР°Р¶Р°С‚РёРµ РЅР° РЅР°РёРјРµРЅРѕРІР°РЅРёРµ РєРѕР»РѕРЅРєРё РіСЂРёРґР°. Р±СѓРґСѓ РїСЂРёРјРµРЅСЏС‚СЊ РґР»СЏ СЃРѕСЂС‚РёСЂРѕРІРєРё
+procedure TForm_Main.StringGrid_CatalogFixedCellClick(Sender: TObject; ACol,  ARow: Integer);
+begin
+  // РєРѕРіРґР° РєР»РёРєР°СЋ РЅР° РєРѕР»РѕРЅРєСѓ, СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ Р·РЅР°Рє СЃРѕСЂС‚РёСЂРѕРІРєРё РїРѕ РІРѕР·СЂР°СЃС‚Р°РЅРёСЋ Л„ РёР»Рё РїРѕ СѓР±С‹РІР°РЅРёСЋ Л…
+  if ACol > 0 then begin // РµСЃР»Рё РЅРµ РЅСѓР»РµРІР°СЏ РєРѕР»РѕРЅРєР°
+    if (Pos('Л„', StringGrid_Catalog.Cells[ACol, 0])=0) or (Pos('Л…', StringGrid_Catalog.Cells[ACol, 0])>0) then
+    begin
+      SetColumnHeaders(StringGrid_Catalog);
+      StringGrid_Catalog.Cells[ACol, 0] := StringGrid_Catalog.Cells[ACol, 0] + ' Л„';
+    end
+    else begin
+      SetColumnHeaders(StringGrid_Catalog);
+      StringGrid_Catalog.Cells[ACol, 0] := StringGrid_Catalog.Cells[ACol, 0] + ' Л…';
+    end;
+  end
+  else
+   SetColumnHeaders(StringGrid_Catalog); // СѓРґР°Р»СЏСЋ РІСЃРµ СЃРѕСЂС‚РёСЂРѕРІРєРё
+  // СЃРѕСЂС‚РёСЂРѕРІРєР°
+  SortItems;
+  //
+  MessageDlg('РќР°Р¶Р°С‚Р° РєРѕР»РѕРЅРєР° в„–'+ IntToStr(ACol), mtInformation, [mbOk], 0, mbOk);
 end;
 
 procedure TForm_Main.ToolButton_addClick(Sender: TObject);
 begin
-  AddItem.Form_AddItem.Tag:=0; // признак добавления для формы
+  AddItem.Form_AddItem.Tag:=0; // РїСЂРёР·РЅР°Рє РґРѕР±Р°РІР»РµРЅРёСЏ РґР»СЏ С„РѕСЂРјС‹
   AddItem.Form_AddItem.ShowModal();
 end;
 
-// выход из приложения
+// РІС‹С…РѕРґ РёР· РїСЂРёР»РѕР¶РµРЅРёСЏ
 procedure TForm_Main.ToolButton_closeClick(Sender: TObject);
 begin
-  // сохраняю в файл перед выходом
+  // СЃРѕС…СЂР°РЅСЏСЋ РІ С„Р°Р№Р» РїРµСЂРµРґ РІС‹С…РѕРґРѕРј
   SaveItemsInFile(FFirst, true, toTypedFile);
-  // закрываю форму и приложение
+  // РѕС‡РёС‰Р°СЏ РїР°РјСЏС‚СЊ РѕС‚ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°
+  ClearList;
+  // Р·Р°РєСЂС‹РІР°СЋ С„РѕСЂРјСѓ Рё РїСЂРёР»РѕР¶РµРЅРёРµ
   Close;
 end;
 
-// редактирование элемента из списка
+// СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ СЌР»РµРјРµРЅС‚Р° РёР· СЃРїРёСЃРєР°
 procedure TForm_Main.ToolButton_editClick(Sender: TObject);
 begin
   CatalogPhone:=FindItemFromGrid(FFirst);
   if CatalogPhone <> nil then
   begin
-    AddItem.Form_AddItem.Tag:=1; // признак редактирования для формы
+    AddItem.Form_AddItem.Tag:=1; // РїСЂРёР·РЅР°Рє СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ РґР»СЏ С„РѕСЂРјС‹
     AddItem.Form_AddItem.ShowModal();
   end;
 end;
 
-// выгрузка в Excel
+// РІС‹РіСЂСѓР·РєР° РІ Excel
 procedure TForm_Main.ToolButton_excelClick(Sender: TObject);
 begin
-  // сохраняю в excel файл
+  // СЃРѕС…СЂР°РЅСЏСЋ РІ excel С„Р°Р№Р»
   SaveItemsInFile(FFirst, true, toExcel);
 end;
 
-// удаление элемента из списка
+// СѓРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° РёР· СЃРїРёСЃРєР°
 procedure TForm_Main.ToolButton_delClick(Sender: TObject);
 begin
-if MessageDlg('Желаете удалить элемент списка?',mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
+if MessageDlg('Р–РµР»Р°РµС‚Рµ СѓРґР°Р»РёС‚СЊ СЌР»РµРјРµРЅС‚ СЃРїРёСЃРєР°?',mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
   begin
-    // сначала находим элемент в двусвязном списке по данным из грида
+    // СЃРЅР°С‡Р°Р»Р° РЅР°С…РѕРґРёРј СЌР»РµРјРµРЅС‚ РІ РґРІСѓСЃРІСЏР·РЅРѕРј СЃРїРёСЃРєРµ РїРѕ РґР°РЅРЅС‹Рј РёР· РіСЂРёРґР°
     CatalogPhone:=FindItemFromGrid(FFirst);
-    // удаляем элемент из списка и из памяти, перераспределяя ссылки
+    // СѓРґР°Р»СЏРµРј СЌР»РµРјРµРЅС‚ РёР· СЃРїРёСЃРєР° Рё РёР· РїР°РјСЏС‚Рё, РїРµСЂРµСЂР°СЃРїСЂРµРґРµР»СЏСЏ СЃСЃС‹Р»РєРё
     if DeleteItem(CatalogPhone) then
     begin
-      // сохраняю в файл из памяти списка с измененным элементом
+      // СЃРѕС…СЂР°РЅСЏСЋ РІ С„Р°Р№Р» РёР· РїР°РјСЏС‚Рё СЃРїРёСЃРєР° СЃ РёР·РјРµРЅРµРЅРЅС‹Рј СЌР»РµРјРµРЅС‚РѕРј
       Form_Main.SaveItemsInFile(FFirst, true, toTypedFile);
-      // отображаю из файла в грид на главной форме
-      Form_Main.StringGrid_Catalog.RowCount:=2; // удаляю строки грида
-      // формируем заново из файла
+      // РѕС‚РѕР±СЂР°Р¶Р°СЋ РёР· С„Р°Р№Р»Р° РІ РіСЂРёРґ РЅР° РіР»Р°РІРЅРѕР№ С„РѕСЂРјРµ
+      Form_Main.StringGrid_Catalog.RowCount:=2; // СѓРґР°Р»СЏСЋ СЃС‚СЂРѕРєРё РіСЂРёРґР°
+      // С„РѕСЂРјРёСЂСѓРµРј Р·Р°РЅРѕРІРѕ РёР· С„Р°Р№Р»Р°
       Form_Main.ShowItemsCatalog();
-      MessageDlg('Элемент успешно удален!', mtInformation, [mbOk], 0, mbOk);
+      MessageDlg('Р­Р»РµРјРµРЅС‚ СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅ!', mtInformation, [mbOk], 0, mbOk);
     end;
     StringGrid_Catalog.SetFocus;
   end;
@@ -318,110 +504,116 @@ end;
 
 procedure TForm_Main.Button_CloseClick(Sender: TObject);
 begin
-  // сохраняю в файл перед выходом
+  // СЃРѕС…СЂР°РЅСЏСЋ РІ С„Р°Р№Р» РїРµСЂРµРґ РІС‹С…РѕРґРѕРј
   SaveItemsInFile(FFirst, true, toTypedFile);
-  // закрываю форму и приложение
+  // Р·Р°РєСЂС‹РІР°СЋ С„РѕСЂРјСѓ Рё РїСЂРёР»РѕР¶РµРЅРёРµ
   Close;
+end;
+
+procedure TForm_Main.SetColumnHeaders(StringGrid_Catalog: TStringGrid);
+begin
+  // Р·Р°РіР»Р°РІРёСЏ СЃС‚РѕР»Р±С†РѕРІ
+  StringGrid_Catalog.Cells[1, 0] := 'РќР°Р·РІР°РЅРёРµ';
+  StringGrid_Catalog.Cells[2, 0] := 'РўРёРї';
+  StringGrid_Catalog.Cells[3, 0] := 'Р“РѕРґ РІС‹С…РѕРґР°';
+  StringGrid_Catalog.Cells[4, 0] := 'Р¦РµРЅР°';
+  StringGrid_Catalog.Cells[5, 0] := 'РћРїРµСЂР°С†РёРѕРЅРЅР°СЏ СЃРёСЃС‚РµРјР°';
+  StringGrid_Catalog.Cells[6, 0] := 'Р Р°Р·РјРµСЂ РґРёР°РіРѕРЅР°Р»Рё';
+  StringGrid_Catalog.Cells[7, 0] := 'РЁРёСЂРёРЅР°';
+  StringGrid_Catalog.Cells[8, 0] := 'Р’С‹СЃРѕС‚Р°';
+  StringGrid_Catalog.Cells[9, 0] := 'РћР—РЈ';
+  StringGrid_Catalog.Cells[10, 0] := 'РџР—РЈ';
+  StringGrid_Catalog.Cells[11, 0] := 'Р¤СЂРѕРЅС‚Р°Р»СЊРЅР°СЏ РєР°РјРµСЂР°';
+  StringGrid_Catalog.Cells[12, 0] := 'РћРїРёСЃР°РЅРёРµ';
 end;
 
 procedure TForm_Main.FormShow(Sender: TObject);
 begin
-  // задаю кол-во столбцов грида
+  // Р·Р°РґР°СЋ РєРѕР»-РІРѕ СЃС‚РѕР»Р±С†РѕРІ РіСЂРёРґР°
   StringGrid_Catalog.ColCount := 14;
-  // заглавия столбцов
-  StringGrid_Catalog.Cells[1, 0] := 'Название';
-  StringGrid_Catalog.Cells[2, 0] := 'Тип';
-  StringGrid_Catalog.Cells[3, 0] := 'Год выхода';
-  StringGrid_Catalog.Cells[4, 0] := 'Цена';
-  StringGrid_Catalog.Cells[5, 0] := 'Операционная система';
-  StringGrid_Catalog.Cells[6, 0] := 'Размер диагонали';
-  StringGrid_Catalog.Cells[7, 0] := 'Ширина';
-  StringGrid_Catalog.Cells[8, 0] := 'Высота';
-  StringGrid_Catalog.Cells[9, 0] := 'ОЗУ';
-  StringGrid_Catalog.Cells[10, 0] := 'ПЗУ';
-  StringGrid_Catalog.Cells[11, 0] := 'Фронтальная камера';
-  StringGrid_Catalog.Cells[12, 0] := 'Описание';
-  //
-  ShowItemsCatalog(); // формируем данные для грида
+  // Р·Р°РіР»Р°РІРёСЏ СЃС‚РѕР»Р±С†РѕРІ
+  SetColumnHeaders(StringGrid_Catalog);
+  // С„РѕСЂРјРёСЂСѓСЋ РґР°РЅРЅС‹Рµ РґР»СЏ РіСЂРёРґР°
+  ShowItemsCatalog();
 end;
 
 
-// прочитать данные из txt файла
+// РїСЂРѕС‡РёС‚Р°С‚СЊ РґР°РЅРЅС‹Рµ РёР· txt С„Р°Р№Р»Р°
 procedure TForm_Main.MenuItem_ReadTxtClick(Sender: TObject);
 begin
   FormTextFile.Form_TextFile.ShowModal();
 end;
 
-// сохранить в тектовый файл
+// СЃРѕС…СЂР°РЅРёС‚СЊ РІ С‚РµРєС‚РѕРІС‹Р№ С„Р°Р№Р»
 procedure TForm_Main.MenuItem_SaveTxtClick(Sender: TObject);
 begin
   SaveItemsInFile(FFirst, true, toTextFile);
-  MessageDlg('Данные сохранены в текстовый файл '+FileTextName+'!', mtInformation, [mbOk], 0, mbOk);
+  MessageDlg('Р”Р°РЅРЅС‹Рµ СЃРѕС…СЂР°РЅРµРЅС‹ РІ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р» '+FileTextName+'!', mtInformation, [mbOk], 0, mbOk);
 end;
 
-// процедура записи в типизированный или текстовый файл
+// РїСЂРѕС†РµРґСѓСЂР° Р·Р°РїРёСЃРё РІ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹Р№ РёР»Рё С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р»
 procedure TForm_Main.SaveItemsInFile(NPtr: PCatalog; isSave: boolean; Pr:TypeFileToSave);
 const
   xlHAlignCenter = -4108;
   xlVAlignCenter = -4108;
 var
   ptr, ptrTemp: PCatalog;
-  FText : TextFile; // файловая переменная для записи в текстовый файл
-  TypedFile: File of TFileCatalog; // файловая переменная
+  FText : TextFile; // С„Р°Р№Р»РѕРІР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ Р·Р°РїРёСЃРё РІ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р»
+  TypedFile: File of TFileCatalog; // С„Р°Р№Р»РѕРІР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ
   FCatalog: TFileCatalog;
   StrToTextFile, CameraStr:string;
-  ExcelObj, Workbook, Sheet, Range: variant;  // переменная для объекта Excel
+  ExcelObj, Workbook, Sheet, Range: variant;  // РїРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ РѕР±СЉРµРєС‚Р° Excel
   BeginCol, BeginRow : integer;
 begin
   if isSave then
   begin
     if Pr = toTypedFile then
-      // открытие файла и ассоциация с переменной FileName типизированного файла
+      // РѕС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»Р° Рё Р°СЃСЃРѕС†РёР°С†РёСЏ СЃ РїРµСЂРµРјРµРЅРЅРѕР№ FileName С‚РёРїРёР·РёСЂРѕРІР°РЅРЅРѕРіРѕ С„Р°Р№Р»Р°
       AssignFile(TypedFile, FileName)
     else if Pr = toTextFile then
-      // открытие файла и ассоциация с переменной FText текстового файла
+      // РѕС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»Р° Рё Р°СЃСЃРѕС†РёР°С†РёСЏ СЃ РїРµСЂРµРјРµРЅРЅРѕР№ FText С‚РµРєСЃС‚РѕРІРѕРіРѕ С„Р°Р№Р»Р°
       AssignFile(FText, FileTextName);
     try
       if Pr = toTypedFile then
-        Rewrite(TypedFile) // создаю новый типизированный файл, перезаписываю старый, если есть
+        Rewrite(TypedFile) // СЃРѕР·РґР°СЋ РЅРѕРІС‹Р№ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹Р№ С„Р°Р№Р», РїРµСЂРµР·Р°РїРёСЃС‹РІР°СЋ СЃС‚Р°СЂС‹Р№, РµСЃР»Рё РµСЃС‚СЊ
       else if Pr = toTextFile then begin
-        Rewrite(FText); // создаю новый текстовый файл, перезаписываю старый, если есть
-        // Колонки с названиями в текстовом файле
-        StrToTextFile:='          Название           |             Тип             | Год выхода | Цена | Операционная система | Размер диагонали | Ширина | Высота | ОЗУ | ПЗУ | Фронтальная камера | Описание ';
-        // Запись в текстовый файл названия колонок
+        Rewrite(FText); // СЃРѕР·РґР°СЋ РЅРѕРІС‹Р№ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р», РїРµСЂРµР·Р°РїРёСЃС‹РІР°СЋ СЃС‚Р°СЂС‹Р№, РµСЃР»Рё РµСЃС‚СЊ
+        // РљРѕР»РѕРЅРєРё СЃ РЅР°Р·РІР°РЅРёСЏРјРё РІ С‚РµРєСЃС‚РѕРІРѕРј С„Р°Р№Р»Рµ
+        StrToTextFile:='          РќР°Р·РІР°РЅРёРµ           |             РўРёРї             | Р“РѕРґ РІС‹С…РѕРґР° | Р¦РµРЅР° | РћРїРµСЂР°С†РёРѕРЅРЅР°СЏ СЃРёСЃС‚РµРјР° | Р Р°Р·РјРµСЂ РґРёР°РіРѕРЅР°Р»Рё | РЁРёСЂРёРЅР° | Р’С‹СЃРѕС‚Р° | РћР—РЈ | РџР—РЈ | Р¤СЂРѕРЅС‚Р°Р»СЊРЅР°СЏ РєР°РјРµСЂР° | РћРїРёСЃР°РЅРёРµ ';
+        // Р—Р°РїРёСЃСЊ РІ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р» РЅР°Р·РІР°РЅРёСЏ РєРѕР»РѕРЅРѕРє
         Writeln(FText, StrToTextFile);
       end
       else if Pr = toExcel then begin
-        ExcelObj:=CreateOleObject('Excel.Application'); // запускаем excel приложение и ассоциацию на переменную ExcelObj
-        ExcelObj.Application.EnableEvents := false; // Отключаю реакцию Excel на события, чтобы ускорить вывод информации
-        ExcelObj.DisplayAlerts := False; // отключаю все сообщения Excel
-        Workbook:=ExcelObj.WorkBooks.Add; // добавляем книгу и ассоциацию на переменную Workbook
-        Sheet:=Workbook.Sheets.item[1]; // получаю первый лист в книге и ассоциацию на переменную Sheet, куда и буду писать данные
-        // заголовок и наименования столбцов
-        BeginCol:=1; // первый столбец
-        BeginRow:=3; // начинаю с третьей строки
-        Sheet.Cells(1,BeginCol):='Каталог телефонов';  // заголовок на листе
+        ExcelObj:=CreateOleObject('Excel.Application'); // Р·Р°РїСѓСЃРєР°РµРј excel РїСЂРёР»РѕР¶РµРЅРёРµ Рё Р°СЃСЃРѕС†РёР°С†РёСЋ РЅР° РїРµСЂРµРјРµРЅРЅСѓСЋ ExcelObj
+        ExcelObj.Application.EnableEvents := false; // РћС‚РєР»СЋС‡Р°СЋ СЂРµР°РєС†РёСЋ Excel РЅР° СЃРѕР±С‹С‚РёСЏ, С‡С‚РѕР±С‹ СѓСЃРєРѕСЂРёС‚СЊ РІС‹РІРѕРґ РёРЅС„РѕСЂРјР°С†РёРё
+        ExcelObj.DisplayAlerts := False; // РѕС‚РєР»СЋС‡Р°СЋ РІСЃРµ СЃРѕРѕР±С‰РµРЅРёСЏ Excel
+        Workbook:=ExcelObj.WorkBooks.Add; // РґРѕР±Р°РІР»СЏРµРј РєРЅРёРіСѓ Рё Р°СЃСЃРѕС†РёР°С†РёСЋ РЅР° РїРµСЂРµРјРµРЅРЅСѓСЋ Workbook
+        Sheet:=Workbook.Sheets.item[1]; // РїРѕР»СѓС‡Р°СЋ РїРµСЂРІС‹Р№ Р»РёСЃС‚ РІ РєРЅРёРіРµ Рё Р°СЃСЃРѕС†РёР°С†РёСЋ РЅР° РїРµСЂРµРјРµРЅРЅСѓСЋ Sheet, РєСѓРґР° Рё Р±СѓРґСѓ РїРёСЃР°С‚СЊ РґР°РЅРЅС‹Рµ
+        // Р·Р°РіРѕР»РѕРІРѕРє Рё РЅР°РёРјРµРЅРѕРІР°РЅРёСЏ СЃС‚РѕР»Р±С†РѕРІ
+        BeginCol:=1; // РїРµСЂРІС‹Р№ СЃС‚РѕР»Р±РµС†
+        BeginRow:=3; // РЅР°С‡РёРЅР°СЋ СЃ С‚СЂРµС‚СЊРµР№ СЃС‚СЂРѕРєРё
+        Sheet.Cells(1,BeginCol):='РљР°С‚Р°Р»РѕРі С‚РµР»РµС„РѕРЅРѕРІ';  // Р·Р°РіРѕР»РѕРІРѕРє РЅР° Р»РёСЃС‚Рµ
         Range := Sheet.Cells[1,BeginCol];
-        Range.Font.Bold := True; // жирный шрифт
-        Range.Font.Size:=14; // размер шрифта
-        Sheet.Cells(BeginRow, 1):='Название';
-        Sheet.Cells(BeginRow, 2):='Тип';
-        Sheet.Cells(BeginRow, 3):='Год выхода';
-        Sheet.Cells(BeginRow, 4):='Цена';
-        Sheet.Cells(BeginRow, 5):='Операционная система';
-        Sheet.Cells(BeginRow, 6):='Размер диагонали';
-        Sheet.Cells(BeginRow, 7):='Ширина';
-        Sheet.Cells(BeginRow, 8):='Высота';
-        Sheet.Cells(BeginRow, 9):='ОЗУ';
-        Sheet.Cells(BeginRow, 10):='ПЗУ';
-        Sheet.Cells(BeginRow, 11):='Фронтальная камера';
-        Sheet.Cells(BeginRow, 12):='Описание';
-        // оформление заголовков столбцов
-        Range := Sheet.Range['A3:L3']; // выбран диапозон ячеек заголовков столбцов
-        Range.HorizontalAlignment:=xlHAlignCenter; // центрирование по горизонтали
-        Range.VerticalAlignment:=xlVAlignCenter;  // центрирование по вертикали
-        Range.Font.Bold := True; // жирный шрифт
-        // настраиваю ширину столбцов
+        Range.Font.Bold := True; // Р¶РёСЂРЅС‹Р№ С€СЂРёС„С‚
+        Range.Font.Size:=14; // СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°
+        Sheet.Cells(BeginRow, 1):='РќР°Р·РІР°РЅРёРµ';
+        Sheet.Cells(BeginRow, 2):='РўРёРї';
+        Sheet.Cells(BeginRow, 3):='Р“РѕРґ РІС‹С…РѕРґР°';
+        Sheet.Cells(BeginRow, 4):='Р¦РµРЅР°';
+        Sheet.Cells(BeginRow, 5):='РћРїРµСЂР°С†РёРѕРЅРЅР°СЏ СЃРёСЃС‚РµРјР°';
+        Sheet.Cells(BeginRow, 6):='Р Р°Р·РјРµСЂ РґРёР°РіРѕРЅР°Р»Рё';
+        Sheet.Cells(BeginRow, 7):='РЁРёСЂРёРЅР°';
+        Sheet.Cells(BeginRow, 8):='Р’С‹СЃРѕС‚Р°';
+        Sheet.Cells(BeginRow, 9):='РћР—РЈ';
+        Sheet.Cells(BeginRow, 10):='РџР—РЈ';
+        Sheet.Cells(BeginRow, 11):='Р¤СЂРѕРЅС‚Р°Р»СЊРЅР°СЏ РєР°РјРµСЂР°';
+        Sheet.Cells(BeginRow, 12):='РћРїРёСЃР°РЅРёРµ';
+        // РѕС„РѕСЂРјР»РµРЅРёРµ Р·Р°РіРѕР»РѕРІРєРѕРІ СЃС‚РѕР»Р±С†РѕРІ
+        Range := Sheet.Range['A3:L3']; // РІС‹Р±СЂР°РЅ РґРёР°РїРѕР·РѕРЅ СЏС‡РµРµРє Р·Р°РіРѕР»РѕРІРєРѕРІ СЃС‚РѕР»Р±С†РѕРІ
+        Range.HorizontalAlignment:=xlHAlignCenter; // С†РµРЅС‚СЂРёСЂРѕРІР°РЅРёРµ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
+        Range.VerticalAlignment:=xlVAlignCenter;  // С†РµРЅС‚СЂРёСЂРѕРІР°РЅРёРµ РїРѕ РІРµСЂС‚РёРєР°Р»Рё
+        Range.Font.Bold := True; // Р¶РёСЂРЅС‹Р№ С€СЂРёС„С‚
+        // РЅР°СЃС‚СЂР°РёРІР°СЋ С€РёСЂРёРЅСѓ СЃС‚РѕР»Р±С†РѕРІ
         Sheet.Range['B:B'].ColumnWidth := 15;
         Sheet.Range['C:C'].ColumnWidth := 15;
         Sheet.Range['D:D'].ColumnWidth := 15;
@@ -432,12 +624,12 @@ begin
         Sheet.Range['A:A'].ColumnWidth := 18;
         Inc(BeginRow);
       end;
-      // проходимся по двусвязному списку
+      // РїСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РґРІСѓСЃРІСЏР·РЅРѕРјСѓ СЃРїРёСЃРєСѓ
       ptr := NPtr.Next;
       while ptr <> nil do
       begin
         //////////////////////////////////////////////////////////
-        if Pr = toTypedFile then // запись в типизированный файл
+        if Pr = toTypedFile then // Р·Р°РїРёСЃСЊ РІ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹Р№ С„Р°Р№Р»
         begin
           FCatalog.PhoneName := ptr.Data.PhoneName;
           FCatalog.TypeName := ptr.Data.TypeName;
@@ -451,15 +643,15 @@ begin
           FCatalog.VstroyennayaMemory := ptr.Data.VstroyennayaMemory;
           FCatalog.IsFrontCamera := ptr.Data.IsFrontCamera;
           FCatalog.Discription := ptr.Data.Discription;
-          // запись в файл
-          Write(TypedFile, FCatalog); // вставляем новый элемент
+          // Р·Р°РїРёСЃСЊ РІ С„Р°Р№Р»
+          Write(TypedFile, FCatalog); // РІСЃС‚Р°РІР»СЏРµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚
         end
         ///////////////////////////////////////////
-        else if Pr = toTextFile then // запись в текстовый файл
+        else if Pr = toTextFile then // Р·Р°РїРёСЃСЊ РІ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р»
         begin
-          // формирую строку для записи в текстовый файл
+          // С„РѕСЂРјРёСЂСѓСЋ СЃС‚СЂРѕРєСѓ РґР»СЏ Р·Р°РїРёСЃРё РІ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р»
           StrToTextFile:=ptr.Data.PhoneName;
-          // добавляю пробелы, чтобы красиво смотрелось в тектовом файле
+          // РґРѕР±Р°РІР»СЏСЋ РїСЂРѕР±РµР»С‹, С‡С‚РѕР±С‹ РєСЂР°СЃРёРІРѕ СЃРјРѕС‚СЂРµР»РѕСЃСЊ РІ С‚РµРєС‚РѕРІРѕРј С„Р°Р№Р»Рµ
           if Length(ptr.Data.PhoneName)<30 then StrToTextFile:=StrToTextFile+StringOfChar(' ',30-Length(ptr.Data.PhoneName));
           StrToTextFile:=StrToTextFile+ptr.Data.TypeName;
           if Length(ptr.Data.TypeName)<30 then StrToTextFile:=StrToTextFile+StringOfChar(' ',30-Length(ptr.Data.TypeName));
@@ -482,11 +674,11 @@ begin
           StrToTextFile:=StrToTextFile+ptr.Data.IsFrontCamera;
           if Length(ptr.Data.IsFrontCamera)<21 then StrToTextFile:=StrToTextFile+StringOfChar(' ',21-Length(ptr.Data.IsFrontCamera));
           StrToTextFile:=StrToTextFile+ptr.Data.Discription;
-          // запись в текстовый файл сформированной строки
+          // Р·Р°РїРёСЃСЊ РІ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р» СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅРѕР№ СЃС‚СЂРѕРєРё
           Writeln(FText, StrToTextFile);
         end
         ////////////////////////////////////////////////////////////
-        else if Pr = toExcel then begin // запись в excel файл
+        else if Pr = toExcel then begin // Р·Р°РїРёСЃСЊ РІ excel С„Р°Р№Р»
           Sheet.Cells(BeginRow, 1):=ptr.Data.PhoneName;
           Sheet.Cells(BeginRow, 2):=ptr.Data.TypeName;
           Sheet.Cells(BeginRow, 3):=ptr.Data.YearVihoda;
@@ -501,19 +693,20 @@ begin
           Sheet.Cells(BeginRow, 12):=ptr.Data.Discription;
           Inc(BeginRow);
         end;
-        // переход к следующему элементу
+        // РїРµСЂРµС…РѕРґ Рє СЃР»РµРґСѓСЋС‰РµРјСѓ СЌР»РµРјРµРЅС‚Сѓ
         ptrTemp := ptr.Next;
         ptr := ptrTemp;
       end;
       if Pr = toExcel then
-        ExcelObj.Visible := true; // Делаю Excel видимым после прохода по двусвязному списку
+        ExcelObj.Visible := true; // Р”РµР»Р°СЋ Excel РІРёРґРёРјС‹Рј РїРѕСЃР»Рµ РїСЂРѕС…РѕРґР° РїРѕ РґРІСѓСЃРІСЏР·РЅРѕРјСѓ СЃРїРёСЃРєСѓ
     finally
-      if Pr = toTypedFile then // закрываю типизированный файл
+      if Pr = toTypedFile then // Р·Р°РєСЂС‹РІР°СЋ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅС‹Р№ С„Р°Р№Р»
         CloseFile(TypedFile)
-      else if Pr = toTextFile then // закрываю текстовый файл
+      else if Pr = toTextFile then // Р·Р°РєСЂС‹РІР°СЋ С‚РµРєСЃС‚РѕРІС‹Р№ С„Р°Р№Р»
         CloseFile(FText);
     end;
   end;
-end; { вызов процедуры добавления элемента (листинг 6.5) }
+end; { РІС‹Р·РѕРІ РїСЂРѕС†РµРґСѓСЂС‹ РґРѕР±Р°РІР»РµРЅРёСЏ СЌР»РµРјРµРЅС‚Р° (Р»РёСЃС‚РёРЅРі 6.5) }
+
 
 end.
