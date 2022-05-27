@@ -110,6 +110,10 @@
             <Form>Form_TextFile</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="AboutProgram.pas">
+            <Form>Form_About</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

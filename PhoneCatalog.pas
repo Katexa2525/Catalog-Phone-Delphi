@@ -56,6 +56,8 @@ type
     PopupMenu_txt: TPopupMenu;
     MenuItem_SaveTxt: TMenuItem;
     MenuItem_ReadTxt: TMenuItem;
+    ToolButton3: TToolButton;
+    ToolButton_about: TToolButton;
     procedure Button_CloseClick(Sender: TObject);
     procedure ShowItemsCatalog;
     procedure FormShow(Sender: TObject);
@@ -72,6 +74,7 @@ type
     procedure ToolButton_excelClick(Sender: TObject);
     procedure StringGrid_CatalogFixedCellClick(Sender: TObject; ACol, ARow: Integer);
     procedure SetColumnHeaders(StringGrid_Catalog: TStringGrid);
+    procedure ToolButton_aboutClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -87,7 +90,7 @@ var
 
 implementation
 
-uses AddItem, FormTextFile;
+uses AddItem, FormTextFile, AboutProgram;
 
 {$R *.dfm}
 
@@ -202,7 +205,7 @@ begin
     Exit;
   End;
 
-   Ptr:=El2;
+   {Ptr:=El2;
    PrtPrev:= El2^.Prev;
    PrtNext:=El2^.Next;
 
@@ -217,10 +220,10 @@ begin
    // меняю данные
    DataTemp:=El1^.Data;
    El1^.Data:=El2^.Data;
-   El2^.Data:=DataTemp;
+   El2^.Data:=DataTemp;}
 
     //Меняю данные соседей
- {* If El1^.Prev=El2 then //Если элементы - соседи друг другу
+  If El1^.Prev=El2 then //Если элементы - соседи друг другу
   Begin
     El1^.Prev:=El2^.Prev;
     if El1^.Next<>nil then
@@ -228,23 +231,38 @@ begin
     if El2^.Prev<>nil then
       El2^.Prev^.Next:=El1;
     El2^.Next:=El1^.Next;
-    // меняю данные
-    DataTemp:=El1^.Data;
-    El1^.Data:=El2^.Data;
-    El2^.Data:=DataTemp;
   End
   Else if El1^.Next=El2 then
   Begin
-    El2^.Prev:=El1^.Prev;
+    {El2^.Prev:=El1^.Prev;
     if El2^.Next<>nil then
       El2^.Next^.Prev:=El1;
     if El1^.Prev<>nil then
       El1^.Prev^.Next:=El2;
-    El1^.Next:=El2^.Next;
+    El1^.Next:=El2^.Next;}
+
+    {PrtPrev:=El1^.Prev;
+    PrtNext:=El1.Next;
+    El1^.Next:=El2^.Prev;
+    El1^.Prev:=PrtNext;
+    El1^.Next^.Prev:=PrtNext;
     // меняю данные
-    DataTemp:=El1^.Data;
-    El1^.Data:=El2^.Data;
-    El2^.Data:=DataTemp;
+    //DataTemp:=El1^.Data;
+    //El1^.Data:=El2^.Data;
+    //
+    El2^.Next:=El2^.Next^.Prev;
+    El2^.Prev:=PrtNext;
+    El2^.Prev^.Next:=PrtNext;
+    // меняю данные
+    //El2^.Data:=DataTemp;}
+
+    {Prt := El2^.Prev;
+    after_pieA.NextCell := new_cell;
+    new_cellA.NextCell := before_me;
+    before_me".PrevCell := new_cell;
+    new_cellA.PrevCell := after_me;}
+
+
   End
   Else //Если они не соседи
   Begin
@@ -276,7 +294,7 @@ begin
     El2^.Data:=DataTemp;
 
     Dispose(Ptr);
-  End;//Else    *}
+  End;//Else
 
   If El1^.Prev=nil then FFirst:=El1;
   If El1^.Next=nil then FLast:=El1;
@@ -292,7 +310,7 @@ var
   i: Cardinal;
   Ptr: PCatalog;
 begin
-  i:=1;
+  i:=0;
   Ptr:=FFirst;
   While Ptr<>FLast do
   Begin
@@ -322,7 +340,7 @@ begin
       Ptr_1:=Ptr_1^.Next;
     end;
     // наименьший элемент PtrBestValue найден, переставляю с елементом Ptr
-    ChangeItems(PtrBestValue, Ptr);
+    ChangeItems(Ptr, PtrBestValue);
     // к след элементу
     Ptr:=Ptr^.Next;
   End;
@@ -350,7 +368,7 @@ begin
     Reset(TypedFile);
     while not Eof(TypedFile) do
     begin
-      Read(TypedFile, FCatalog); // читаем элемент из файла
+      Read(TypedFile, FCatalog); // читаю элемент из файла
       // добавляю элемент в список
       CatalogPhone := AddItemCatalog(num, NPtr);
       // заполняю данными
@@ -443,6 +461,11 @@ begin
   SortItems;
   //
   MessageDlg('Нажата колонка №'+ IntToStr(ACol), mtInformation, [mbOk], 0, mbOk);
+end;
+
+procedure TForm_Main.ToolButton_aboutClick(Sender: TObject);
+begin
+  AboutProgram.Form_About.ShowModal();
 end;
 
 procedure TForm_Main.ToolButton_addClick(Sender: TObject);
