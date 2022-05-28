@@ -44,9 +44,9 @@ object Form_AddItem: TForm_AddItem
   object Label6: TLabel
     Left = 48
     Top = 224
-    Width = 111
+    Width = 117
     Height = 13
-    Caption = #1054#1087#1077#1088#1072#1090#1080#1074#1085#1072#1103' '#1089#1080#1089#1090#1077#1084#1072
+    Caption = #1054#1087#1077#1088#1072#1094#1080#1086#1085#1085#1072#1103' '#1089#1080#1089#1090#1077#1084#1072
   end
   object Label7: TLabel
     Left = 256

@@ -80,6 +80,7 @@ type
     procedure SetColumnHeaders(StringGrid_Catalog: TStringGrid);
     procedure ToolButton_aboutClick(Sender: TObject);
     function GetBestValue(Ptr_1, PtrBestValue:PCatalog; PrSort: TypeToSort; NCol:integer): PCatalog;
+    function IsValuesDifferent(Ptr_1, PtrBestValue:PCatalog; NCol:integer): boolean;
   private
     { Private declarations }
   public
@@ -288,13 +289,13 @@ begin
     Ptr_1 := ptr^.Next;
     While Ptr_1 <> nil do // второй цикл со следующего элемента списка
     begin
-      // получаю значение наименьшего или наибольшего элемента
+      // получаю значение наименьшего или наибольшего элемента в зависимости от типа сортировки
       PtrBestValue := Form_Main.GetBestValue(Ptr_1, PtrBestValue, PrSort, NCol);
       // к след элементу
       Ptr_1 := Ptr_1^.Next;
     end;
     // наименьший элемент PtrBestValue найден, переставляю с елементом Ptr
-    if ptr.Data.Price <> PtrBestValue.Data.Price then begin
+    if Form_Main.IsValuesDifferent(ptr, PtrBestValue, NCol)=True then begin
       ChangeItems(ptr, PtrBestValue);
       ptr := FFirst^.Next; // начинаю сначала
     end
@@ -303,12 +304,21 @@ begin
   End;
   // перерисовываю форму по двусвязному списку из памяти
   Form_Main.ShowItemsSortCatalog();
-  // MessageDlg('Список отсортирован!', mtInformation, [mbOk], 0, mbOk);
 end;
 
 function TForm_Main.GetBestValue(Ptr_1, PtrBestValue:PCatalog; PrSort: TypeToSort; NCol:integer): PCatalog;
 begin
   case NCol of
+   1: begin
+     if ((AnsiCompareStr(Ptr_1.Data.PhoneName, PtrBestValue.Data.PhoneName)<0) and (PrSort = TypeToSort.toASC)) or
+        ((AnsiCompareStr(Ptr_1.Data.PhoneName, PtrBestValue.Data.PhoneName)>0) and (PrSort = TypeToSort.toDESC)) then
+      PtrBestValue := Ptr_1 // значение наименьшего или наибольшего элемента
+   end;
+   2: begin
+     if ((AnsiCompareStr(Ptr_1.Data.TypeName, PtrBestValue.Data.TypeName)<0) and (PrSort = TypeToSort.toASC)) or
+        ((AnsiCompareStr(Ptr_1.Data.TypeName, PtrBestValue.Data.TypeName)>0) and (PrSort = TypeToSort.toDESC)) then
+      PtrBestValue := Ptr_1 // значение наименьшего или наибольшего элемента
+   end;
    3: begin
      if ((Ptr_1.Data.YearVihoda < PtrBestValue.Data.YearVihoda) and (PrSort = TypeToSort.toASC)) or
         ((Ptr_1.Data.YearVihoda > PtrBestValue.Data.YearVihoda) and (PrSort = TypeToSort.toDESC)) then
@@ -318,6 +328,11 @@ begin
     if ((Ptr_1.Data.Price < PtrBestValue.Data.Price) and (PrSort = TypeToSort.toASC)) or
        ((Ptr_1.Data.Price > PtrBestValue.Data.Price) and (PrSort = TypeToSort.toDESC)) then
       PtrBestValue := Ptr_1; // значение наименьшего или наибольшего элемента
+   end;
+   5: begin
+     if ((AnsiCompareStr(Ptr_1.Data.OS, PtrBestValue.Data.OS)<0) and (PrSort = TypeToSort.toASC)) or
+        ((AnsiCompareStr(Ptr_1.Data.OS, PtrBestValue.Data.OS)>0) and (PrSort = TypeToSort.toDESC)) then
+      PtrBestValue := Ptr_1 // значение наименьшего или наибольшего элемента
    end;
    6: begin
     if ((Ptr_1.Data.DisplaySize < PtrBestValue.Data.DisplaySize) and (PrSort = TypeToSort.toASC)) or
@@ -344,9 +359,74 @@ begin
        ((Ptr_1.Data.VstroyennayaMemory > PtrBestValue.Data.VstroyennayaMemory) and (PrSort = TypeToSort.toDESC)) then
       PtrBestValue := Ptr_1;// значение наименьшего или наибольшего элемента
    end;
+   11: begin
+     if ((AnsiCompareStr(Ptr_1.Data.IsFrontCamera, PtrBestValue.Data.IsFrontCamera)<0) and (PrSort = TypeToSort.toASC)) or
+        ((AnsiCompareStr(Ptr_1.Data.IsFrontCamera, PtrBestValue.Data.IsFrontCamera)>0) and (PrSort = TypeToSort.toDESC)) then
+      PtrBestValue := Ptr_1 // значение наименьшего или наибольшего элемента
+   end;
+   12: begin
+     if ((AnsiCompareStr(Ptr_1.Data.Discription, PtrBestValue.Data.Discription)<0) and (PrSort = TypeToSort.toASC)) or
+        ((AnsiCompareStr(Ptr_1.Data.Discription, PtrBestValue.Data.Discription)>0) and (PrSort = TypeToSort.toDESC)) then
+      PtrBestValue := Ptr_1 // значение наименьшего или наибольшего элемента
+   end;
   end;
 
   Result := PtrBestValue;
+end;
+
+function TForm_Main.IsValuesDifferent(Ptr_1, PtrBestValue:PCatalog; NCol:integer): boolean;
+begin
+  case NCol of
+   1: begin
+     if AnsiCompareStr(Ptr_1.Data.PhoneName, PtrBestValue.Data.PhoneName)<>0 then
+      Result := True;
+   end;
+   2: begin
+     if AnsiCompareStr(Ptr_1.Data.TypeName, PtrBestValue.Data.TypeName)<>0 then
+      Result := True;
+   end;
+   3: begin
+     if Ptr_1.Data.YearVihoda <> PtrBestValue.Data.YearVihoda then
+      Result := True;
+   end;
+   4: begin
+    if Ptr_1.Data.Price <> PtrBestValue.Data.Price then
+      Result := True;
+   end;
+   5: begin
+     if AnsiCompareStr(Ptr_1.Data.OS, PtrBestValue.Data.OS)<>0 then
+      Result := True;
+   end;
+   6: begin
+    if Ptr_1.Data.DisplaySize <> PtrBestValue.Data.DisplaySize then
+      Result := True;
+   end;
+   7: begin
+    if Ptr_1.Data.DisplayWidth <> PtrBestValue.Data.DisplayWidth then
+      Result := True;
+   end;
+   8: begin
+     if Ptr_1.Data.DisplayHigth <> PtrBestValue.Data.DisplayHigth then
+       Result := True;
+   end;
+   9: begin
+    if Ptr_1.Data.OperationMemory <> PtrBestValue.Data.OperationMemory then
+      Result := True;
+   end;
+   10: begin
+    if Ptr_1.Data.VstroyennayaMemory <> PtrBestValue.Data.VstroyennayaMemory then
+      Result := True;
+   end;
+   11: begin
+     if AnsiCompareStr(Ptr_1.Data.IsFrontCamera, PtrBestValue.Data.IsFrontCamera)<>0 then
+      Result := True;
+   end;
+   12: begin
+     if AnsiCompareStr(Ptr_1.Data.Discription, PtrBestValue.Data.Discription)<>0 then
+      Result := True;
+   end;
+   else Result := False;
+  end;
 end;
 
 // процедура отображения списка из памяти в отсортированном виде
