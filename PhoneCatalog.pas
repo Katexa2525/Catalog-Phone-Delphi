@@ -61,6 +61,7 @@ type
     MenuItem_ReadTxt: TMenuItem;
     ToolButton3: TToolButton;
     ToolButton_about: TToolButton;
+    Edit_Find: TEdit;
     procedure Button_CloseClick(Sender: TObject);
     procedure ShowItemsCatalog;
     procedure ShowItemsSortCatalog;
@@ -81,6 +82,8 @@ type
     procedure ToolButton_aboutClick(Sender: TObject);
     function GetBestValue(Ptr_1, PtrBestValue:PCatalog; PrSort: TypeToSort; NCol:integer): PCatalog;
     function IsValuesDifferent(Ptr_1, PtrBestValue:PCatalog; NCol:integer): boolean;
+    procedure ToolButton_findClick(Sender: TObject);
+    procedure Edit_FindKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -133,16 +136,14 @@ end;
 
 // функция поиска элемента списка по названию, типу, операционной системе
 // начинаем с первого элемента заглушки двусвязного списка NPtr
-function FindItemList(pPhoneName, pTypeName, pOS: string; NPtr: PCatalog)
-  : PCatalog;
+function FindItemList(pPhoneName, pTypeName, pOS: string; NPtr: PCatalog) : PCatalog;
 var
   ptr, ptrTemp: PCatalog;
 begin
   ptr := NPtr.Next;
   while ptr <> nil do
   begin
-    if (ptr.Data.PhoneName = pPhoneName) and (ptr.Data.TypeName = pTypeName) and
-      (ptr.Data.OS = pOS) then
+    if (ptr.Data.PhoneName = pPhoneName) and (ptr.Data.TypeName = pTypeName) and (ptr.Data.OS = pOS) then
     begin
       break; // выход из цикла, если нашли
     end
@@ -634,6 +635,15 @@ begin
   SaveItemsInFile(FFirst, True, toExcel);
 end;
 
+procedure TForm_Main.ToolButton_findClick(Sender: TObject);
+begin
+  // отображаю/скрываю строку поиска
+  if Form_Main.Edit_Find.Visible then
+    Form_Main.Edit_Find.Visible:=False
+  else
+    Form_Main.Edit_Find.Visible:=True;
+end;
+
 // удаление элемента из списка
 procedure TForm_Main.ToolButton_delClick(Sender: TObject);
 begin
@@ -663,6 +673,40 @@ begin
   SaveItemsInFile(FFirst, True, toTypedFile);
   // закрываю форму и приложение
   Close;
+end;
+
+procedure TForm_Main.Edit_FindKeyPress(Sender: TObject; var Key: Char);
+var
+  ptr: PCatalog;
+  i : integer;
+  IsFind:boolean;
+begin
+  IsFind:=False; // признак, что введенный текст найден
+  if key=#13 then begin
+    i:=1; // номер строки в гриде
+    ptr := FFirst.Next;
+    while ptr <> nil do
+    begin
+      if Pos(LowerCase(Trim(Edit_Find.Text)), LowerCase(ptr.Data.PhoneName))>0 then
+      begin
+        with StringGrid_Catalog do
+        begin
+          //Устанавливаем Row/Col
+          Row := i;  Col := 1;
+          SetFocus; // Фокус на грид устанавливаю
+        end;
+        IsFind:=True;
+        break; // выход из цикла, если нашли
+      end
+      else
+      begin
+        ptr := ptr.Next;
+        Inc(i);
+      end;
+    end;
+    if IsFind=False then
+      MessageDlg('Значение ' + Trim(Edit_Find.Text) + ' не найдено. ', mtInformation, [mbOk], 0, mbOk);
+  end;
 end;
 
 procedure TForm_Main.SetColumnHeaders(StringGrid_Catalog: TStringGrid);
@@ -702,8 +746,7 @@ end;
 procedure TForm_Main.MenuItem_SaveTxtClick(Sender: TObject);
 begin
   SaveItemsInFile(FFirst, True, toTextFile);
-  MessageDlg('Данные сохранены в текстовый файл ' + FileTextName + '!',
-    mtInformation, [mbOk], 0, mbOk);
+  MessageDlg('Данные сохранены в текстовый файл ' + FileTextName + '!', mtInformation, [mbOk], 0, mbOk);
 end;
 
 // процедура записи в типизированный или текстовый файл

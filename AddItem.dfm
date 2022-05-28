@@ -79,6 +79,7 @@ object Form_AddItem: TForm_AddItem
     Width = 521
     Height = 21
     TabOrder = 0
+    TextHint = #1042#1074#1077#1076#1080#1090#1077' '#1085#1072#1079#1074#1072#1085#1080#1077' '#1090#1077#1083#1077#1092#1086#1085#1072
   end
   object Edit_Price: TEdit
     Left = 139
@@ -94,12 +95,15 @@ object Form_AddItem: TForm_AddItem
     Width = 521
     Height = 21
     TabOrder = 2
+    TextHint = #1042#1074#1077#1076#1080#1090#1077' '#1085#1072#1079#1074#1072#1085#1080#1077' '#1086#1087#1077#1088#1072#1094#1080#1086#1085#1085#1086#1081' '#1089#1080#1089#1090#1077#1084#1099
   end
   object ComboBox_TypePhone: TComboBox
     Left = 139
     Top = 56
     Width = 256
     Height = 21
+    ParentShowHint = False
+    ShowHint = False
     TabOrder = 1
     Items.Strings = (
       #1057#1084#1072#1088#1090#1092#1086#1085
@@ -111,8 +115,11 @@ object Form_AddItem: TForm_AddItem
     Top = 371
     Width = 644
     Height = 102
+    Hint = 'sfsf'
     Lines.Strings = (
       '')
+    ParentShowHint = False
+    ShowHint = False
     TabOrder = 6
   end
   object GroupBox_Param: TGroupBox

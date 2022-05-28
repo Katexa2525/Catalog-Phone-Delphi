@@ -50,10 +50,9 @@ object Form_Main: TForm_Main
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 1128
+    Width = 548
     Height = 54
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    AutoSize = True
+    Align = alNone
     ButtonHeight = 54
     ButtonWidth = 55
     Caption = 'ToolBar1'
@@ -105,6 +104,7 @@ object Form_Main: TForm_Main
       ImageIndex = 3
       ParentShowHint = False
       ShowHint = True
+      OnClick = ToolButton_findClick
     end
     object ToolButton1: TToolButton
       Left = 228
@@ -180,6 +180,16 @@ object Form_Main: TForm_Main
       ShowHint = True
       OnClick = ToolButton_aboutClick
     end
+  end
+  object Edit_Find: TEdit
+    Left = 800
+    Top = 17
+    Width = 320
+    Height = 24
+    TabOrder = 2
+    TextHint = #1042#1074#1077#1076#1080#1090#1077' '#1085#1072#1079#1074#1072#1085#1080#1077' '#1090#1077#1083#1077#1092#1086#1085#1072' '#1076#1083#1103' '#1087#1086#1080#1089#1082#1072' '#1080' '#1085#1072#1078#1084#1080#1090#1077' Enter'
+    Visible = False
+    OnKeyPress = Edit_FindKeyPress
   end
   object ImageList1: TImageList
     Height = 48
