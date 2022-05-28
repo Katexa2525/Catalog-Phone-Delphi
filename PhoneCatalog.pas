@@ -672,8 +672,8 @@ begin
   StringGrid_Catalog.Cells[2, 0] := 'Тип';
   StringGrid_Catalog.Cells[3, 0] := 'Год выхода';
   StringGrid_Catalog.Cells[4, 0] := 'Цена';
-  StringGrid_Catalog.Cells[5, 0] := 'Операционная система';
-  StringGrid_Catalog.Cells[6, 0] := 'Размер диагонали';
+  StringGrid_Catalog.Cells[5, 0] := 'ОС';
+  StringGrid_Catalog.Cells[6, 0] := 'Диагональ';
   StringGrid_Catalog.Cells[7, 0] := 'Ширина';
   StringGrid_Catalog.Cells[8, 0] := 'Высота';
   StringGrid_Catalog.Cells[9, 0] := 'ОЗУ';

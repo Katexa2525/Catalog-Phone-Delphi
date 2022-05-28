@@ -34,18 +34,18 @@ object Form_Main: TForm_Main
     OnFixedCellClick = StringGrid_CatalogFixedCellClick
     ColWidths = (
       64
-      110
+      162
       92
       85
       73
-      82
-      83
-      80
-      77
-      67
-      82
-      142
-      64)
+      104
+      74
+      63
+      61
+      57
+      59
+      132
+      88)
   end
   object ToolBar1: TToolBar
     Left = 0
