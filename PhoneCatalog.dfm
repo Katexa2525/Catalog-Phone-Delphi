@@ -59,7 +59,6 @@ object Form_Main: TForm_Main
     Caption = 'ToolBar1'
     Images = ImageList1
     TabOrder = 1
-    ExplicitWidth = 1105
     object ToolButton_add: TToolButton
       Left = 0
       Top = 0
@@ -128,7 +127,7 @@ object Form_Main: TForm_Main
       Style = tbsDropDown
     end
     object ToolButton_filter: TToolButton
-      Left = 353
+      Left = 359
       Top = 0
       Width = 8
       Caption = #1060#1080#1083#1100#1090#1088
@@ -136,7 +135,7 @@ object Form_Main: TForm_Main
       Style = tbsSeparator
     end
     object ToolButton_excel: TToolButton
-      Left = 361
+      Left = 367
       Top = 0
       Hint = #1069#1082#1089#1087#1086#1088#1090' '#1074' Microsoft Excel'
       Caption = #1042#1099#1075#1088#1091#1079#1082#1072' '#1074' Excel'
@@ -146,7 +145,7 @@ object Form_Main: TForm_Main
       OnClick = ToolButton_excelClick
     end
     object ToolButton2: TToolButton
-      Left = 416
+      Left = 422
       Top = 0
       Width = 8
       Caption = 'ToolButton2'
@@ -154,7 +153,7 @@ object Form_Main: TForm_Main
       Style = tbsSeparator
     end
     object ToolButton_close: TToolButton
-      Left = 424
+      Left = 430
       Top = 0
       Hint = #1042#1099#1093#1086#1076' '#1080#1079' '#1087#1088#1086#1075#1088#1072#1084#1084#1099
       Caption = #1042#1099#1081#1090#1080' '#1080#1079' '#1087#1088#1080#1083#1086#1078#1077#1085#1080#1103
@@ -164,7 +163,7 @@ object Form_Main: TForm_Main
       OnClick = ToolButton_closeClick
     end
     object ToolButton3: TToolButton
-      Left = 479
+      Left = 485
       Top = 0
       Width = 8
       Caption = 'ToolButton3'
@@ -172,7 +171,7 @@ object Form_Main: TForm_Main
       Style = tbsSeparator
     end
     object ToolButton_about: TToolButton
-      Left = 487
+      Left = 493
       Top = 0
       Hint = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
       Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
