@@ -114,6 +114,7 @@ object Form_Main: TForm_Main
       ImageIndex = 4
       ParentShowHint = False
       ShowHint = True
+      Visible = False
     end
     object ToolButton_txt: TToolButton
       Left = 283
@@ -185,7 +186,7 @@ object Form_Main: TForm_Main
     Left = 800
     Top = 17
     Width = 320
-    Height = 24
+    Height = 21
     TabOrder = 2
     TextHint = #1042#1074#1077#1076#1080#1090#1077' '#1085#1072#1079#1074#1072#1085#1080#1077' '#1090#1077#1083#1077#1092#1086#1085#1072' '#1076#1083#1103' '#1087#1086#1080#1089#1082#1072' '#1080' '#1085#1072#1078#1084#1080#1090#1077' Enter'
     Visible = False
